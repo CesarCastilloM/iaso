@@ -19,12 +19,10 @@ float ibi[NIBI]; int nIbi = 0, iIbi = 0;
 float base = 0, sig = 0, env = 0;
 uint32_t lastBeat = 0, lastSample = 0;
 bool above = false;
-int nMin = 4095, nMax = 0;  // ruido: pico a pico del KY-038 en la ventana de publicacion
 
 void heartTick() {
   if (micros() - lastSample < 10000) return;  // 100 Hz
   lastSample = micros();
-  int n = analogRead(PIN_NOISE); nMin = min(nMin, n); nMax = max(nMax, n);
   float raw = analogRead(PIN_HEART) * HR_SIGN;
   base += 0.01f * (raw - base);
   sig += 0.2f * ((raw - base) - sig);
@@ -111,8 +109,7 @@ void loop() {
   float hr = bpm(), hrv = rmssd();
   float tb = ds.getTempCByIndex(0); ds.requestTemperatures();  // lectura de la conversion anterior
   float tc = dht.readTemperature(), hum = dht.readHumidity();
-  int noise = nMax - nMin, light = analogRead(PIN_LIGHT);
-  nMin = 4095; nMax = 0;
+  int light = analogRead(PIN_LIGHT);
 
   // alertas: rangos fijos + desviacion respecto al basal propio
   String al = "";
@@ -133,8 +130,8 @@ void loop() {
   char js[384];
   snprintf(js, sizeof js,
     "{\"hr\":%.0f,\"hrv\":%.0f,\"temp\":%.1f,\"cab_t\":%.1f,\"cab_h\":%.0f,\"move\":%u,\"act\":\"%s\",\"rest_min\":%lu,"
-    "\"rad_cpm\":%.1f,\"noise\":%d,\"light\":%d,\"alerts\":\"%s\",\"up\":%lu}",
-    hr, hrv, tb, isnan(tc) ? 0 : tc, isnan(hum) ? 0 : hum, vib, act, restMin, cpm, noise, light, al.c_str(), millis() / 1000);
+    "\"rad_cpm\":%.1f,\"light\":%d,\"alerts\":\"%s\",\"up\":%lu}",
+    hr, hrv, tb, isnan(tc) ? 0 : tc, isnan(hum) ? 0 : hum, vib, act, restMin, cpm, light, al.c_str(), millis() / 1000);
   Serial.println(js);
 
   wifiMqtt();

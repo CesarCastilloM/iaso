@@ -14,7 +14,6 @@ Basado en `Hackathon.pdf` (módulos cardiovascular, sueño, estrés, radiación,
 | Temp. corporal | KY-001 (DS18B20) | GPIO4 (+pull-up 4.7k) | temperatura de piel |
 | Temp/humedad | KY-015 (DHT11) | GPIO5 | cabina |
 | Vibración | KY-002 | GPIO27 | movimiento → activo/rest |
-| Micrófono | KY-038 (AO) | GPIO32 | ruido de cabina |
 | Fotorresistor | KY-018 | GPIO35 | luz (ciclo sueño) |
 | Buzzer activo | KY-012 | GPIO25 | alarma |
 | Nextion | NX3224T024 | RX2=16, TX2=17 (5V para VCC, GND común) | UI local |
@@ -34,6 +33,11 @@ El `.HMI` no se puede generar desde código.
 | Estrés | alerta `ESTRES` si la HRV cae >40 % bajo su basal (sin GSR en el kit) |
 | Radiación | conteo de pulsos Geiger en GPIO33 → CPM |
 | Óseo / inmunológico / perfil basal | carga manual en el dashboard → `iaso/<ASTRO_ID>/lab` (retained) |
+| SpO₂, presión arterial, GSR | sin sensor en el kit: también carga manual en el dashboard (mismo topic `lab`) |
+
+Cada dato manual se compara contra el **basal individual** (columna Basal, topic `iaso/<ASTRO_ID>/basal`, retained): Δ % y marca "Fuera de rango" si excede la tolerancia (SpO₂ 3 %, presión 10 %, resto 15 %; editable en `TOL` de `index.html`).
+
+El dashboard separa dos secciones: **Tiempo real** (solo lo que miden los sensores) y **Carga manual** (todo lo que requiere laboratorio o equipo que el kit no tiene).
 | Registro temporal / .csv | el dashboard guarda el historial de la sesión y lo descarga en .csv para el análisis en Python |
 
 ## MQTT

@@ -11,7 +11,6 @@
 
 // Pines ESP32 (ADC1 solamente: el ADC2 no funciona con WiFi activo)
 #define PIN_HEART   34   // KY-039 pulso (analogico)
-#define PIN_NOISE   32   // KY-038 microfono (analogico)
 #define PIN_LIGHT   35   // KY-018 fotorresistor (analogico)
 #define PIN_DS18    4    // KY-001 DS18B20 temperatura corporal (necesita pull-up 4.7k a 3V3)
 #define PIN_DHT     5    // KY-015 DHT11 temp/humedad de cabina
