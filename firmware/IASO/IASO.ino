@@ -5,7 +5,15 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include <DHT.h>
+#include <WebServer.h>
+#include <Preferences.h>
 #include "config.h"
+#include "dashboard_html.h"
+
+WebServer web(80);
+Preferences prefs;
+char js[384] = "{}";   // ultima telemetria, servida en /data
+String labJson;        // ultimos resultados de laboratorio, guardados en flash
 
 WiFiClient net;
 PubSubClient mqtt(net);
@@ -68,11 +76,8 @@ void nex(const char* obj, const char* txt) {
 }
 
 void wifiMqtt() {
-  if (WiFi.status() != WL_CONNECTED) {
-    WiFi.begin(WIFI_SSID, WIFI_PASS);
-    for (int i = 0; i < 20 && WiFi.status() != WL_CONNECTED; i++) { heartTick(); delay(10); }
-    if (WiFi.status() != WL_CONNECTED) return;
-  }
+  // el ESP32 reconecta solo; no repetir WiFi.begin() porque cada intento corta la red propia
+  if (WiFi.status() != WL_CONNECTED) return;
   if (!mqtt.connected()) {
     String t = String("iaso/") + ASTRO_ID + "/status";
     mqtt.connect(ASTRO_ID, nullptr, nullptr, t.c_str(), 0, true, "offline");
@@ -92,12 +97,34 @@ void setup() {
   ds.begin(); dht.begin();
   ds.setWaitForConversion(false);
   mqtt.setServer(MQTT_HOST, MQTT_PORT);
+  mqtt.setBufferSize(1024);  // el default (256 B) corta la telemetria con alertas y los datos de laboratorio
   analogSetAttenuation(ADC_11db);
+
+  WiFi.mode(WIFI_AP_STA);
+  WiFi.setTxPower(WIFI_POWER_8_5dBm);  // menos pico de corriente (evita brownout con USB debil); alcanza ~10 m
+  WiFi.softAP(AP_SSID, AP_PASS);
+  if (strlen(WIFI_SSID)) WiFi.begin(WIFI_SSID, WIFI_PASS);
+  prefs.begin("iaso");
+  labJson = prefs.getString("lab", "{}");
+  web.on("/", [] { web.send_P(200, "text/html; charset=utf-8", DASHBOARD_HTML); });
+  web.on("/data", [] { web.send(200, "application/json", js); });
+  web.on("/lab", HTTP_GET, [] { web.send(200, "application/json", labJson); });
+  web.on("/lab", HTTP_POST, [] {
+    String b = web.arg("plain");
+    if (b.length() > 600 || !b.startsWith("{")) { web.send(400); return; }
+    labJson = b; prefs.putString("lab", b);
+    if (mqtt.connected()) mqtt.publish((String("iaso/") + ASTRO_ID + "/lab").c_str(), b.c_str(), true);
+    web.send(204);
+  });
+  web.begin();
+  Serial.printf("Red %s -> http://%s\n", AP_SSID, WiFi.softAPIP().toString().c_str());
+
   lastMove = millis(); lastPub = millis();
 }
 
 void loop() {
   heartTick();
+  web.handleClient();
   if (millis() - lastPub < PUBLISH_MS) return;
   uint32_t dt = millis() - lastPub; lastPub = millis();
 
@@ -130,7 +157,6 @@ void loop() {
   if (cpm > RAD_CPM_MAX) al += "RAD ";
   digitalWrite(PIN_BUZZ, al.length() ? HIGH : LOW);
 
-  char js[384];
   snprintf(js, sizeof js,
     "{\"hr\":%.0f,\"hrv\":%.0f,\"temp\":%.1f,\"cab_t\":%.1f,\"cab_h\":%.0f,\"move\":%u,\"act\":\"%s\",\"rest_min\":%lu,"
     "\"rad_cpm\":%.1f,\"noise\":%d,\"light\":%d,\"alerts\":\"%s\",\"up\":%lu}",

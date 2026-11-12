@@ -1,7 +1,11 @@
 #pragma once
-// WiFi (2.4 GHz)
-#define WIFI_SSID   "TU_WIFI"
-#define WIFI_PASS   "TU_PASSWORD"
+// Red propia del ESP32: conecta el celular y abre http://192.168.4.1
+#define AP_SSID     "IASO-astro01"
+#define AP_PASS     "iaso1234"     // minimo 8 caracteres
+
+// WiFi con internet (2.4 GHz) para MQTT. Dejalo "" para usar solo la red propia.
+#define WIFI_SSID   ""
+#define WIFI_PASS   ""
 
 // Broker Mosquitto publico y gratis (sin cuenta). Cualquiera puede leer los topics:
 // cambia ASTRO_ID por algo unico y no uses datos reales de personas.

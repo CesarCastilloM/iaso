@@ -4,8 +4,18 @@ ESP32 + pantalla Nextion NX3224T024 + sensores del kit KY-xxx → MQTT (Mosquitt
 Basado en `Hackathon.pdf` (módulos cardiovascular, sueño, estrés, radiación, alertas con perfil basal).
 
 ## Estructura
-- `firmware/IASO/` — sketch Arduino (`config.h`: WiFi, broker, pines)
-- `dashboard/index.html` — visor MQTT por WebSocket (abrir directo, o subir a GitHub Pages gratis)
+- `firmware/IASO/` — sketch Arduino (`config.h`: red propia, WiFi, broker, pines)
+- `dashboard/index.html` — dashboard. Lo sirve el propio ESP32 y también funciona por MQTT (archivo local o GitHub Pages)
+- `dashboard/gen_header.py` — copia `index.html` a `firmware/IASO/dashboard_html.h`. **Córrelo cada vez que cambies el dashboard** y vuelve a subir el sketch
+
+## Ver el dashboard en el celular (sin internet)
+1. El ESP32 crea su propia red WiFi: **`IASO-astro01`**, contraseña **`iaso1234`** (se cambian en `config.h`).
+2. Conecta el celular a esa red. Si Android avisa "sin internet", elige **mantener la conexión**.
+3. Abre **http://192.168.4.1** en el navegador (con `http`, no `https`).
+
+La página se actualiza cada 2.5 s. Los resultados de laboratorio quedan guardados en la flash del ESP32 aunque se reinicie.
+Si además pones tu WiFi con internet en `WIFI_SSID`, también publica por MQTT. La red propia sigue activa, pero al conectarse
+cambia al canal de tu router, y el celular puede desconectarse un momento.
 
 ## Cableado (ESP32, 3V3 salvo indicación)
 | Sensor | Módulo | Pin ESP32 | Uso |

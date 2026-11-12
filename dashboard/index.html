@@ -20,9 +20,10 @@ h2{font-size:16px;margin:20px 0 8px}button{padding:8px 14px;border-radius:8px;bo
 <h2>Resultados de laboratorio (carga manual)</h2>
 <form id="lab"></form>
 <p><button form="lab">Guardar</button> <small id="labst"></small></p>
-<script src="https://unpkg.com/mqtt@5.3.4/dist/mqtt.min.js"></script>
 <script>
-// Uso: index.html#iaso-astro01-x7k2  (mismo ASTRO_ID que config.h)
+// Dos modos: servido por el ESP32 en su red propia (http://192.168.4.1, sin internet) -> lee /data del ESP32.
+// Abierto desde otro lugar (archivo, GitHub Pages) -> MQTT. Uso: index.html#iaso-astro01-x7k2 (ASTRO_ID de config.h)
+const local=location.hostname==="192.168.4.1";
 const id=location.hash.slice(1)||"iaso-astro01-x7k2";
 const F=[["hr","Pulso","bpm"],["hrv","HRV (RMSSD)","ms"],["temp","Temp. corporal","°C"],["rad_cpm","Radiación","CPM"],
 ["cab_t","Cabina","°C"],["cab_h","Humedad","%"],["act","Actividad",""],["rest_min","Descanso","min"],["noise","Ruido","p-p"],["light","Luz","raw"]];
@@ -33,22 +34,41 @@ const L=[["glucosa","Glucosa","mg/dL"],["calcio","Calcio","mg/dL"],["creatinina"
 g.innerHTML=F.map(([k,n,u])=>`<div class="c"><small>${n}</small><div class="v" id="${k}">–</div><small>${u}</small></div>`).join("")+
  '<div class="c" id="al"><small>Alertas</small><div class="v ok" id="a">–</div></div>';
 lab.innerHTML=L.map(([k,n,u])=>`<label>${n} ${u&&"("+u+")"}<input name="${k}" type="number" step="any"></label>`).join("");
-const hist=[];  // shortcut: solo en memoria (se pierde al recargar); el historial persistente va en el servidor Python
-const c=mqtt.connect("wss://test.mosquitto.org:8081");
-c.on("connect",()=>{st.textContent="broker OK · "+id;c.subscribe(`iaso/${id}/#`)});
-c.on("error",e=>st.textContent="error: "+e.message);
-c.on("message",(t,m)=>{
- if(t.endsWith("/status")){st.textContent="nodo "+m;return}
- let d;try{d=JSON.parse(m)}catch{return}
- if(t.endsWith("/lab")){L.forEach(([k])=>lab.elements[k].value=d[k]??"");labst.textContent="último: "+(d.fecha||"");return}
+const hist=[];let lastUp,saveLab;  // shortcut: historial solo en memoria (se pierde al recargar); el persistente va en el servidor Python
+function show(d){
+ if(d.up===undefined||d.up===lastUp)return;lastUp=d.up;
  hist.push({fecha:new Date().toISOString(),...d});nrows.textContent=hist.length+" muestras";
  F.forEach(([k])=>document.getElementById(k).textContent=d[k]??"–");
  a.textContent=d.alerts||"OK";a.className="v "+(d.alerts?"bad":"ok");
-});
-// retained: el ultimo resultado queda en el broker para el servidor Python y otros visores
-lab.onsubmit=e=>{e.preventDefault();const d={fecha:new Date().toISOString()};
+}
+function showLab(d){L.forEach(([k])=>lab.elements[k].value=d[k]??"");if(d.fecha)labst.textContent="último: "+d.fecha}
+if(local){
+ const poll=()=>fetch("/data").then(r=>r.json()).then(d=>{st.textContent="nodo ESP32 · red local";show(d)})
+  .catch(()=>st.textContent="sin conexión con el ESP32");
+ poll();setInterval(poll,2500);
+ fetch("/lab").then(r=>r.json()).then(showLab).catch(()=>{});
+ saveLab=d=>fetch("/lab",{method:"POST",body:JSON.stringify(d)}).then(r=>{if(!r.ok)throw 0});
+}else{
+ const s=document.createElement("script");s.src="https://unpkg.com/mqtt@5.3.4/dist/mqtt.min.js";
+ s.onerror=()=>st.textContent="sin internet: conéctate a la red del ESP32 y abre http://192.168.4.1";
+ s.onload=()=>{
+  const c=mqtt.connect("wss://test.mosquitto.org:8081");
+  c.on("connect",()=>{st.textContent="broker OK · "+id;c.subscribe(`iaso/${id}/#`)});
+  c.on("error",e=>st.textContent="error: "+e.message);
+  c.on("message",(t,m)=>{
+   if(t.endsWith("/status")){st.textContent="nodo "+m;return}
+   let d;try{d=JSON.parse(m)}catch{return}
+   t.endsWith("/lab")?showLab(d):show(d);
+  });
+  // retained: el ultimo resultado queda en el broker para el servidor Python y otros visores
+  saveLab=d=>c.publishAsync(`iaso/${id}/lab`,JSON.stringify(d),{retain:true});
+ };
+ document.head.append(s);
+}
+lab.onsubmit=e=>{e.preventDefault();if(!saveLab){labst.textContent="sin conexión";return}
+ const d={fecha:new Date().toISOString()};
  L.forEach(([k])=>{const v=lab.elements[k].value;if(v!=="")d[k]=+v});
- c.publish(`iaso/${id}/lab`,JSON.stringify(d),{retain:true});labst.textContent="guardado "+d.fecha};
+ saveLab(d).then(()=>labst.textContent="guardado "+d.fecha,()=>labst.textContent="error al guardar")};
 csv.onclick=()=>{if(!hist.length)return;const k=Object.keys(hist[hist.length-1]);
  const s=[k.join(","),...hist.map(r=>k.map(x=>JSON.stringify(r[x]??"")).join(","))].join("\n");
  const u=URL.createObjectURL(new Blob([s],{type:"text/csv"}));
