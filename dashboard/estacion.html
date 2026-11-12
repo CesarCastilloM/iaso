@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IASO Estación</title>
+<style>
+/* Estilo data-dense (ui-ux-pro-max): sin CDN ni fuentes web porque la laptop esta en la red del ESP32, sin internet */
+:root{
+ --bg:#F8FAFC;--panel:#FFFFFF;--line:#E2E8F0;--line2:#CBD5E1;--fg:#0F172A;--mut:#475569;--faint:#64748B;
+ --pri:#1E40AF;--data:#2563EB;--area:rgba(37,99,235,.10);--band:rgba(22,163,74,.08);--bandline:rgba(22,163,74,.35);
+ --warn:#B45309;--warnbg:#FEF3C7;--bad:#B91C1C;--badbg:#FEE2E2;--ok:#15803D;--okbg:#DCFCE7;--hl:#F59E0B;
+ --mono:ui-monospace,"Cascadia Mono","SF Mono",Consolas,monospace;
+ --sans:-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+@media(prefers-color-scheme:dark){:root{
+ --bg:#0B1120;--panel:#111827;--line:#1F2937;--line2:#374151;--fg:#F1F5F9;--mut:#94A3B8;--faint:#64748B;
+ --pri:#93C5FD;--data:#60A5FA;--area:rgba(96,165,250,.12);--band:rgba(74,222,128,.07);--bandline:rgba(74,222,128,.30);
+ --warn:#FBBF24;--warnbg:rgba(245,158,11,.14);--bad:#F87171;--badbg:rgba(248,113,113,.14);--ok:#4ADE80;--okbg:rgba(74,222,128,.12);
+}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 var(--sans);-webkit-font-smoothing:antialiased}
+.wrap{max-width:1440px;margin:0 auto;padding:0 20px 32px}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* barra superior */
+.top{position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:1px solid var(--line);margin-bottom:20px}
+.top .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;padding-top:12px;padding-bottom:12px}
+.brand{display:flex;align-items:baseline;gap:10px;margin-right:auto}
+.brand b{font-size:16px;letter-spacing:.06em}.brand span{color:var(--mut);font-size:14px}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:4px 10px;border:1px solid var(--line);border-radius:999px;font-size:13px;color:var(--mut);background:var(--panel)}
+.pill i{width:8px;height:8px;border-radius:50%;background:var(--faint)}
+.pill.on i{background:var(--ok)}.pill.off i{background:var(--bad)}
+.seg{display:inline-flex;border:1px solid var(--line2);border-radius:6px;overflow:hidden;background:var(--panel)}
+.seg button{border:0;border-right:1px solid var(--line2);background:none;color:var(--mut);padding:7px 12px;min-height:36px}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed=true]{background:var(--pri);color:var(--panel)}
+button{font:500 13px var(--sans);cursor:pointer;transition:background-color .15s,color .15s,border-color .15s}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line2);border-radius:6px;background:var(--panel);color:var(--fg);padding:7px 12px;min-height:36px}
+.btn:hover{border-color:var(--pri)}.seg button:hover:not([aria-pressed=true]){color:var(--fg);background:var(--bg)}
+:focus-visible{outline:2px solid var(--data);outline-offset:2px}
+
+/* secciones */
+h2{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin:28px 0 10px}
+h2 small{text-transform:none;letter-spacing:0;font-weight:400;color:var(--faint);margin-left:8px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:6px}
+
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:6px;background:var(--panel);overflow:hidden}
+.kpi{padding:12px 14px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);margin:0 -1px -1px 0}
+.kpi dt{font-size:13px;color:var(--mut)}
+.kpi dd{margin:2px 0 6px;font:600 24px/1.2 var(--mono);font-variant-numeric:tabular-nums}
+.kpi dd small{font:400 13px var(--sans);color:var(--mut);margin-left:4px}
+.tag{display:inline-block;font-size:12px;font-weight:500;padding:1px 7px;border-radius:4px;color:var(--mut);background:var(--bg)}
+.tag.ok{color:var(--ok);background:var(--okbg)}.tag.warn{color:var(--warn);background:var(--warnbg)}.tag.bad{color:var(--bad);background:var(--badbg)}
+.alertbar{display:flex;align-items:center;gap:10px;margin-top:10px;padding:10px 14px;border:1px solid var(--line);border-radius:6px;background:var(--panel)}
+.alertbar.bad{border-color:var(--bad);background:var(--badbg)}
+.alertbar svg{flex:none}
+
+/* graficas */
+.charts{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(min(100%,420px),1fr))}
+.chart{padding:12px 14px 8px;position:relative}
+.chart header{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:14px}
+.chart header b{font-weight:600}.chart header span{font-size:13px;color:var(--mut)}
+.chart canvas{width:100%;height:150px;display:block;margin-top:6px;cursor:crosshair}
+.tip{position:absolute;pointer-events:none;padding:4px 8px;border-radius:4px;background:var(--fg);color:var(--panel);font:12px var(--mono);white-space:nowrap;opacity:0;transition:opacity .1s}
+.legend{display:flex;gap:16px;font-size:12px;color:var(--mut);margin-top:10px}
+.legend i{display:inline-block;width:14px;height:8px;vertical-align:middle;margin-right:6px;border-radius:2px}
+
+/* estudio */
+.study{display:grid;gap:12px;grid-template-columns:minmax(0,3fr) minmax(260px,2fr)}
+@media(max-width:900px){.study{grid-template-columns:1fr}}
+.find{margin:0;padding:6px 0;list-style:none}
+.find li{padding:8px 16px 8px 14px;border-left:3px solid transparent;line-height:1.55}
+.find li+li{border-top:1px solid var(--line)}
+.find li.warn{border-left-color:var(--hl)}
+.side{display:grid;gap:12px;align-content:start}
+.stat{padding:12px 14px}.stat dt{font-size:13px;color:var(--mut)}
+.stat dd{margin:2px 0 0;font:600 20px var(--mono)}.stat p{margin:4px 0 0;font-size:13px;color:var(--mut)}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:9px 14px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line)}
+th{font-size:12px;font-weight:600;color:var(--mut);background:var(--bg);position:sticky;top:0}
+th:first-child,td:first-child{text-align:left}
+td{font-family:var(--mono);font-variant-numeric:tabular-nums}td:first-child{font-family:var(--sans)}
+tbody tr:hover{background:var(--bg)}tbody tr:last-child td{border-bottom:0}
+td.low{color:var(--warn);font-weight:600}
+td.mt{font-weight:500}td.mt span{color:var(--mut);font-weight:400;margin-left:4px}
+.note{color:var(--faint);font-size:13px;margin:10px 2px 0;max-width:110ch}
+.empty{color:var(--faint);font-family:var(--sans)}
+@media(max-width:700px){.kpis{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.wrap{padding:0 16px 24px}.brand span{display:none}.top{position:static}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head><body>
+
+<div class="top"><div class="wrap">
+ <div class="brand"><b>IASO</b><span>Estación de análisis</span></div>
+ <span class="pill" id="st" role="status"><i></i><span>Conectando…</span></span>
+ <div class="seg" id="rng" role="group" aria-label="Periodo">
+  <button data-m="15" aria-pressed="false">15 min</button><button data-m="60" aria-pressed="true">1 h</button>
+  <button data-m="360" aria-pressed="false">6 h</button><button data-m="0" aria-pressed="false">Todo</button>
+ </div>
+ <button class="btn" id="csv"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Exportar CSV</button>
+</div></div>
+
+<main class="wrap">
+ <h2>Lectura actual<small id="ts"></small></h2>
+ <dl class="kpis" id="now"></dl>
+ <div class="alertbar" id="alb" role="status"></div>
+
+ <h2>Tendencias<small id="per"></small></h2>
+ <div class="charts" id="charts"></div>
+ <div class="legend"><span><i style="background:var(--data)"></i>Medición</span><span><i style="background:var(--band);border:1px solid var(--bandline)"></i>Rango normal</span><span><i style="background:var(--hl)"></i>Fuera de rango</span></div>
+
+ <h2>Estudio del periodo<small id="cov"></small></h2>
+ <div class="study">
+  <div class="panel"><ul class="find" id="hall"><li class="empty">Calculando…</li></ul></div>
+  <dl class="side">
+   <div class="panel stat"><dt>Alertas</dt><dd id="s_al">–</dd><p id="s_al2"></p></div>
+   <div class="panel stat"><dt>Actividad y descanso</dt><dd id="s_ac">–</dd><p id="s_ac2"></p></div>
+   <div class="panel stat"><dt>Estrés (variabilidad cardiaca)</dt><dd id="s_es">–</dd><p id="s_es2"></p></div>
+  </dl>
+ </div>
+ <div class="panel tw" style="margin-top:12px"><table><thead><tr><th scope="col">Métrica</th><th scope="col">Promedio</th><th scope="col">Mín</th><th scope="col">Máx</th><th scope="col">Desv. est.</th><th scope="col">Tendencia / h</th><th scope="col">En rango</th><th scope="col">Lecturas válidas</th></tr></thead><tbody id="tab"></tbody></table></div>
+ <p class="note">Rango normal: los mismos umbrales que disparan las alertas del ESP32. Tendencia: pendiente por hora (regresión lineal), visible con 10 min de datos o más.
+ Sensores didácticos (KY-039, DHT11, DS18B20): útiles para ver tendencias, no para diagnóstico.</p>
+</main>
+
+<script>
+const M={hr:["Pulso","bpm",[45,120]],hrv:["HRV (RMSSD)","ms"],temp:["Temp. corporal","°C",[35,38]],
+ cab_t:["Temp. cabina","°C",[18,30]],cab_h:["Humedad cabina","%",[30,70]],rad_cpm:["Radiación","CPM",[0,100]],
+ noise:["Ruido","p-p"],light:["Luz","raw"]};
+// el firmware manda 0 / -127 cuando no hay dedo o sensor: no son lecturas
+const ok=(k,r)=>k==="hr"||k==="hrv"?r[k]>0:k==="temp"?r[k]>-100:k==="cab_t"||k==="cab_h"?r.cab_h>0:true;
+const $=id=>document.getElementById(id), css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const fmt=v=>(+v).toLocaleString("es-MX",{maximumFractionDigits:1});
+const hm=t=>new Date(t*1000).toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"});
+const ICON_OK='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="2" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+const ICON_AL='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--bad)" stroke-width="2" aria-hidden="true"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01"/></svg>';
+let min=60, pts={};
+
+now.innerHTML=Object.entries(M).map(([k,[n,u]])=>`<div class="kpi"><dt>${n}</dt><dd id="v_${k}">–<small>${u}</small></dd><span class="tag" id="t_${k}">Sin lectura</span></div>`).join("");
+charts.innerHTML=Object.entries(M).map(([k,[n,u,b]])=>`<section class="panel chart"><header><b>${n} <span>${u}${b?` · normal ${b[0]}–${b[1]}`:""}</span></b><span id="s_${k}"></span></header><canvas id="c_${k}" role="img" aria-label="Gráfica de ${n}"></canvas><div class="tip" id="p_${k}"></div></section>`).join("");
+
+function status(k,r){
+ if(!r||!ok(k,r))return["","Sin lectura"];
+ const b=M[k][2];if(!b)return["","Sin umbral"];
+ return r[k]<b[0]||r[k]>b[1]?["warn","Fuera de rango"]:["ok","Normal"];
+}
+
+function draw(k){
+ const cv=$("c_"+k),dpr=devicePixelRatio||1,W=cv.clientWidth,H=cv.clientHeight,p=pts[k]||[];
+ cv.width=W*dpr;cv.height=H*dpr;const g=cv.getContext("2d");g.scale(dpr,dpr);
+ g.font="11px "+css("--mono");g.fillStyle=css("--faint");
+ if(p.length<2){g.fillText(p.length?"Pocas muestras en el periodo":"Sin lecturas en el periodo",8,H/2);$("s_"+k).textContent="";cv._map=null;return}
+ const band=M[k][2];let lo=Math.min(...p.map(x=>x[1])),hi=Math.max(...p.map(x=>x[1]));
+ if(band){lo=Math.min(lo,band[0]);hi=Math.max(hi,band[1])}
+ if(hi===lo){hi+=1;lo-=1}const pad=(hi-lo)*.1;lo-=pad;hi+=pad;
+ const L=38,R=8,T=6,B=20,t0=p[0][0],t1=p[p.length-1][0];
+ const X=t=>L+(t-t0)/(t1-t0||1)*(W-L-R),Y=v=>T+(hi-v)/(hi-lo)*(H-T-B);
+ if(band){const y1=Y(band[1]),y0=Y(band[0]);g.fillStyle=css("--band");g.fillRect(L,y1,W-L-R,y0-y1);
+  g.strokeStyle=css("--bandline");g.setLineDash([3,3]);g.beginPath();g.moveTo(L,y1);g.lineTo(W-R,y1);g.moveTo(L,y0);g.lineTo(W-R,y0);g.stroke();g.setLineDash([])}
+ g.strokeStyle=css("--line");g.lineWidth=1;g.fillStyle=css("--faint");
+ const ax=v=>hi-lo>=10?Math.round(v).toLocaleString("es-MX"):fmt(v);  // ejes con enteros salvo rangos chicos (temp)
+ for(let i=0;i<=3;i++){const v=lo+pad+(hi-lo-2*pad)*i/3,y=Math.round(Y(v))+.5;g.beginPath();g.moveTo(L,y);g.lineTo(W-R,y);g.stroke();g.fillText(ax(v),2,y+4)}
+ g.fillText(hm(t0),L,H-4);const e=hm(t1);g.fillText(e,W-R-g.measureText(e).width,H-4);
+ // tramos continuos (un corte de >30 s parte la linea)
+ const segs=[[]];p.forEach((q,i)=>{if(i&&q[0]-p[i-1][0]>30)segs.push([]);segs[segs.length-1].push(q)});
+ for(const s of segs){if(s.length<2)continue;  // un punto suelto no forma area
+  g.beginPath();s.forEach(([t,v],i)=>i?g.lineTo(X(t),Y(v)):g.moveTo(X(t),Y(v)));
+  g.lineTo(X(s[s.length-1][0]),H-B);g.lineTo(X(s[0][0]),H-B);g.closePath();g.fillStyle=css("--area");g.fill();
+  g.beginPath();s.forEach(([t,v],i)=>i?g.lineTo(X(t),Y(v)):g.moveTo(X(t),Y(v)));g.strokeStyle=css("--data");g.lineWidth=1.75;g.lineJoin="round";g.stroke()}
+ if(band){g.fillStyle=css("--hl");for(const[t,v]of p)if(v<band[0]||v>band[1]){g.beginPath();g.arc(X(t),Y(v),2.5,0,7);g.fill()}}
+ const last=p[p.length-1];g.fillStyle=css("--data");g.beginPath();g.arc(X(last[0]),Y(last[1]),3.5,0,7);g.fill();
+ $("s_"+k).textContent="último "+fmt(last[1]);
+ cv._map={X,Y,L,R,W,H,B};
+}
+
+// tooltip: punto mas cercano al cursor
+document.addEventListener("pointermove",ev=>{
+ for(const k in M){const cv=$("c_"+k),tip=$("p_"+k),m=cv._map;
+  if(!m||ev.target!==cv){tip.style.opacity=0;continue}
+  const x=ev.offsetX,p=pts[k];let best=p[0];for(const q of p)if(Math.abs(m.X(q[0])-x)<Math.abs(m.X(best[0])-x))best=q;
+  tip.textContent=`${hm(best[0])}  ${fmt(best[1])} ${M[k][1]}`;
+  const px=cv.offsetLeft+m.X(best[0]),py=cv.offsetTop+m.Y(best[1]);
+  tip.style.left=Math.min(Math.max(px-tip.offsetWidth/2,4),cv.parentNode.clientWidth-tip.offsetWidth-4)+"px";
+  tip.style.top=(py-30)+"px";tip.style.opacity=1}
+});
+
+async function estado(){
+ const pill=$("st"),txt=pill.querySelector("span");
+ try{const s=await(await fetch("/api/estado")).json();
+  pill.className="pill "+(s.conectado?"on":"off");
+  txt.textContent=s.conectado?"En línea · "+s.esp.replace("http://",""):"Sin conexión con el ESP32";
+  pill.title=s.conectado?"":s.error+" — ¿la laptop está en la red IASO-astro01?";
+  const r=s.ultimo;if(!r)return;
+  ts.textContent="actualizado "+new Date(r.t*1000).toLocaleTimeString("es-MX");
+  for(const k in M){const[c,l]=status(k,r);$("v_"+k).innerHTML=(ok(k,r)?fmt(r[k]):"–")+`<small>${M[k][1]}</small>`;const t=$("t_"+k);t.className="tag "+c;t.textContent=l}
+  alb.className="alertbar"+(r.alerts?" bad":"");
+  alb.innerHTML=r.alerts?`${ICON_AL}<span><b>Alerta activa:</b> ${r.alerts}</span>`:`${ICON_OK}<span>Sin alertas activas</span>`;
+ }catch{pill.className="pill off";txt.textContent="estacion.py no está corriendo"}
+}
+
+async function analisis(){
+ try{
+  const[rows,e]=await Promise.all([fetch("/api/serie?min="+min).then(r=>r.json()),fetch("/api/estudio?min="+min).then(r=>r.json())]);
+  for(const k in M){pts[k]=rows.filter(r=>ok(k,r)).map(r=>[r.t,r[k]]);draw(k)}
+  per.textContent=e.muestras?`${e.desde.slice(11,16)} – ${e.hasta.slice(11,16)} · ${e.muestras} muestras`:"";
+  cov.textContent=e.muestras?`${e.duracion_min} min analizados${e.huecos?` · ${e.huecos} corte${e.huecos>1?"s":""} de conexión`:""}`:"";
+  const warn=/fuera|alerta|estrés|sin lecturas|no está|alza|baja|calentando|enfriando|picos|solo/i;
+  hall.innerHTML=e.hallazgos.map(h=>`<li class="${warn.test(h)&&!/^Sin alertas/.test(h)?"warn":""}">${h}</li>`).join("");
+  const largo=e.duracion_min>=10;
+  tab.innerHTML=Object.values(e.metricas||{}).map(m=>m.n?`<tr><td class="mt">${m.nombre} <span>${m.unidad}</span></td><td>${fmt(m.media)}</td><td>${fmt(m.min)}</td><td>${fmt(m.max)}</td><td>${fmt(m.desv)}</td><td>${largo?(m.tendencia_h>0?"+":"")+fmt(m.tendencia_h):"–"}</td><td class="${m.en_rango<90?"low":""}">${m.en_rango!=null?m.en_rango+" %":"–"}</td><td>${m.cobertura} %</td></tr>`
+   :`<tr><td class="mt">${m.nombre}</td><td colspan="7" class="empty" style="text-align:left">Sin lecturas en el periodo</td></tr>`).join("");
+  const a=e.alertas;if(a){s_al.textContent=a.episodios+(a.episodios===1?" episodio":" episodios");s_al.style.color=a.episodios?"var(--bad)":"";
+   s_al2.textContent=`${a.pct_tiempo}% del tiempo · `+(Object.entries(a.tipos).map(([k,v])=>`${k} ×${v}`).join(", ")||"ninguna")}
+  const c=e.actividad;if(c){s_ac.textContent=c.pct_descanso+"% en descanso";s_ac2.textContent=`Descanso más largo ${c.descanso_max_min} min · ${c.movimientos} movimientos`}
+  const s=e.estres;if(s){s_es.textContent=s.pct_hrv_baja+"% con HRV baja";s_es.style.color=s.pct_hrv_baja>=20?"var(--warn)":"";s_es2.textContent=`HRV típica ${s.hrv_basal} ms; baja = 40% por debajo`}
+  else{s_es.textContent="–";s_es2.textContent="Se necesitan al menos 10 lecturas de HRV"}
+ }catch{}
+}
+
+rng.onclick=e=>{const b=e.target.closest("[data-m]");if(!b)return;min=+b.dataset.m;
+ rng.querySelectorAll("[data-m]").forEach(x=>x.setAttribute("aria-pressed",x===b));analisis()};
+$("csv").onclick=()=>location.href="/api/csv?min="+min;
+addEventListener("resize",()=>{for(const k in M)draw(k)});
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>{for(const k in M)draw(k)});
+estado();analisis();setInterval(estado,2500);setInterval(analisis,10000);
+</script></body></html>

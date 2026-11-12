@@ -69,10 +69,24 @@ void IRAM_ATTR onVib() { vibCount++; }
 void IRAM_ATTR onRad() { radCount++; }
 uint32_t lastMove = 0;
 
-// ---- Nextion: actualiza componentes de texto por nombre (ver README) ----
-void nex(const char* obj, const char* txt) {
-  Serial2.printf("%s.txt=\"%s\"", obj, txt);
-  Serial2.write(0xFF); Serial2.write(0xFF); Serial2.write(0xFF);
+// ---- Nextion: pantalla tactil disenada en nextion/IASO.HMI (cargar con NextionBridge/upload_tft.py) ----
+// page0 Vitales: t7 pulso, t8 HRV, t9 temp, t14 alertas | page1 Ambiente: t10 rad, t11 cabina, t12 actividad, t13 ruido/luz
+// page2 Sistema: t7 encendido, t8 red, t9 MQTT, b3 silenciar (envia 'M'), h0 brillo (lo maneja la pantalla)
+// los valores son vscope global, por eso se pueden escribir aunque su pagina no este visible
+void nexCmd(const char* c) {
+  Serial2.print(c); Serial2.write(0xFF); Serial2.write(0xFF); Serial2.write(0xFF);
+}
+void nexTxt(const char* obj, const char* val) {
+  char c[80]; snprintf(c, sizeof c, "%s.txt=\"%s\"", obj, val); nexCmd(c);
+}
+bool muted = false;  // alarma silenciada desde la pantalla; se rearma sola cuando ya no hay alertas
+void nexInput() {
+  while (Serial2.available())
+    if (Serial2.read() == 'M') {
+      muted = !muted;
+      if (muted) digitalWrite(PIN_BUZZ, LOW);
+      nexTxt("page2.b3", muted ? "Silenciado" : "Silenciar");
+    }
 }
 
 void wifiMqtt() {
@@ -90,7 +104,9 @@ uint32_t lastPub = 0;
 
 void setup() {
   Serial.begin(115200);
+  Serial2.setTxBufferSize(1024);  // a 9600 baud la pantalla tarda ~0.7 s: sin buffer bloquearia el muestreo del pulso
   Serial2.begin(9600, SERIAL_8N1, NEX_RX, NEX_TX);
+  nexCmd("");  // limpia cualquier basura en el buffer de la pantalla
   pinMode(PIN_VIB, INPUT_PULLUP); pinMode(PIN_RAD, INPUT); pinMode(PIN_BUZZ, OUTPUT);
   attachInterrupt(PIN_VIB, onVib, FALLING);
   attachInterrupt(PIN_RAD, onRad, FALLING);
@@ -124,6 +140,7 @@ void setup() {
 
 void loop() {
   heartTick();
+  nexInput();
   web.handleClient();
   if (millis() - lastPub < PUBLISH_MS) return;
   uint32_t dt = millis() - lastPub; lastPub = millis();
@@ -155,7 +172,8 @@ void loop() {
   if (tb > -100 && (tb >= 38 || tb <= 35)) al += "TEMP ";
   if (!isnan(tc) && tc > 30) al += "CABINA ";
   if (cpm > RAD_CPM_MAX) al += "RAD ";
-  digitalWrite(PIN_BUZZ, al.length() ? HIGH : LOW);
+  if (!al.length() && muted) { muted = false; nexTxt("page2.b3", "Silenciar"); }
+  digitalWrite(PIN_BUZZ, al.length() && !muted ? HIGH : LOW);
 
   snprintf(js, sizeof js,
     "{\"hr\":%.0f,\"hrv\":%.0f,\"temp\":%.1f,\"cab_t\":%.1f,\"cab_h\":%.0f,\"move\":%u,\"act\":\"%s\",\"rest_min\":%lu,"
@@ -168,11 +186,21 @@ void loop() {
   mqtt.loop();
 
   char b[32];
-  snprintf(b, sizeof b, "%.0f", hr);        nex("t_hr", b);
-  snprintf(b, sizeof b, "%.0f", hrv);       nex("t_hrv", b);
-  snprintf(b, sizeof b, "%.1f", tb);        nex("t_temp", b);
-  snprintf(b, sizeof b, "%.1f", cpm);       nex("t_rad", b);
-  snprintf(b, sizeof b, "%.0fC %.0f%%", tc, hum); nex("t_cab", b);
-  nex("t_act", act);
-  nex("t_alert", al.length() ? al.c_str() : "OK");
+  snprintf(b, sizeof b, "%.0f bpm", hr);    nexTxt("page0.t7", hr > 0 ? b : "sin dedo");
+  snprintf(b, sizeof b, "%.0f ms", hrv);    nexTxt("page0.t8", b);
+  if (tb > -100) snprintf(b, sizeof b, "%.1f C", tb); else strcpy(b, "sin sensor");
+  nexTxt("page0.t9", b);
+  nexCmd(al.length() ? "page0.t14.pco=63488" : "page0.t14.pco=2016");  // rojo / verde
+  al.trim(); nexTxt("page0.t14", al.length() ? al.c_str() : "Sin alertas");
+  snprintf(b, sizeof b, "%.1f CPM", cpm);   nexTxt("page1.t10", b);
+  if (isnan(tc)) strcpy(b, "sin sensor"); else snprintf(b, sizeof b, "%.0fC %.0f%%", tc, hum);
+  nexTxt("page1.t11", b);
+  if (still > REST_MS) snprintf(b, sizeof b, "rest %lu min", restMin); else strcpy(b, act);
+  nexTxt("page1.t12", b);
+  snprintf(b, sizeof b, "%d / %d", noise, light); nexTxt("page1.t13", b);
+  uint32_t up = millis() / 60000;
+  snprintf(b, sizeof b, "%luh %02lum", up / 60, up % 60); nexTxt("page2.t7", b);
+  nexTxt("page2.t8", WiFi.status() == WL_CONNECTED ? WiFi.localIP().toString().c_str()
+                                                   : WiFi.softAPIP().toString().c_str());
+  nexTxt("page2.t9", !strlen(WIFI_SSID) ? "sin WiFi" : mqtt.connected() ? "conectado" : "desconectado");
 }

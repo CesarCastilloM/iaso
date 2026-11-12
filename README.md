@@ -17,24 +17,51 @@ La página se actualiza cada 2.5 s. Los resultados de laboratorio quedan guardad
 Si además pones tu WiFi con internet en `WIFI_SSID`, también publica por MQTT. La red propia sigue activa, pero al conectarse
 cambia al canal de tu router, y el celular puede desconectarse un momento.
 
-## Cableado (ESP32, 3V3 salvo indicación)
-| Sensor | Módulo | Pin ESP32 | Uso |
-|---|---|---|---|
-| Pulso | KY-039 | GPIO34 | BPM + HRV (RMSSD) |
-| Temp. corporal | KY-001 (DS18B20) | GPIO4 (+pull-up 4.7k) | temperatura de piel |
-| Temp/humedad | KY-015 (DHT11) | GPIO5 | cabina |
-| Vibración | KY-002 | GPIO27 | movimiento → activo/rest |
-| Micrófono | KY-038 (AO) | GPIO32 | ruido de cabina |
-| Fotorresistor | KY-018 | GPIO35 | luz (ciclo sueño) |
-| Buzzer activo | KY-012 | GPIO25 | alarma |
-| Nextion | NX3224T024 | RX2=16, TX2=17 (5V para VCC, GND común) | UI local |
-| Radiación | contador Geiger externo | GPIO33 | CPM |
+## Estación de análisis en la laptop (sin internet)
+`dashboard/estacion.py` recibe los datos del ESP32, los guarda y los analiza. Solo usa la librería estándar de Python.
+1. Conecta la laptop a la red **`IASO-astro01`**.
+2. Corre `python dashboard/estacion.py` y abre **http://localhost:8080**.
 
-## Pantalla Nextion
-El firmware solo manda texto a componentes **con estos nombres exactos**. Crea en Nextion Editor
-(320x240, horizontal, baud 9600) un Text por cada uno: `t_hr` `t_hrv` `t_temp` `t_rad` `t_cab` `t_act` `t_alert`
-(+ etiquetas fijas). Compila y copia el `.tft` a una microSD FAT32 para flashear la pantalla.
-El `.HMI` no se puede generar desde código.
+- Lee `http://192.168.4.1/data` cada 2 s y guarda cada muestra en `dashboard/datos/iaso_<fecha>.csv`.
+  Al reiniciarse, vuelve a cargar todo lo guardado.
+- Gráficas por métrica con el rango normal sombreado, y periodos de 15 min, 1 h, 6 h o todo.
+- **Estudio** del periodo: promedio, mínimo, máximo, desviación, tendencia por hora, % del tiempo en rango normal,
+  episodios de alerta por tipo, % de descanso, estrés (HRV más de 40 % bajo su valor típico), cortes de conexión
+  y hallazgos en texto. Se exporta en .csv.
+- `--esp http://IP` si el ESP32 tiene otra dirección. `--test` corre la autoprueba del análisis.
+
+## Cableado (ESP32-S3, sensores a 3V3, GND común)
+| Sensor | Módulo | Pin ESP32-S3 | Uso |
+|---|---|---|---|
+| Pulso | KY-039 | GPIO1 | BPM + HRV (RMSSD) |
+| Micrófono | KY-038 (AO) | GPIO2 | ruido de cabina |
+| Fotorresistor | KY-018 | GPIO4 | luz (ciclo sueño) |
+| Temp. corporal | KY-001 (DS18B20) | GPIO5 (+pull-up 4.7k si el módulo no la trae) | temperatura de piel |
+| Temp/humedad | KY-015 (DHT11) | GPIO6 | cabina |
+| Vibración | KY-002 | GPIO7 | movimiento → activo/rest |
+| Radiación | contador Geiger externo | GPIO15 | CPM |
+| Buzzer activo | KY-012 | GPIO21 | alarma |
+| Nextion | NX3224T024 | TX→GPIO16, RX→GPIO17, +5V→5V, GND | UI local |
+
+Compilar con la placa **ESP32S3 Dev Module** (`esp32:esp32:esp32s3`). Si la placa tiene dos USB, usa el marcado **COM/UART**.
+
+## Pantalla Nextion (táctil)
+Proyecto en `firmware/IASO/nextion/IASO.HMI` (Nextion Editor, NX3224T024, horizontal, fondo negro). Tiene 3 páginas,
+y se navega con la barra de abajo:
+- **Vitales**: pulso, HRV, temperatura corporal y alertas.
+- **Ambiente**: radiación, cabina, actividad, ruido y luz.
+- **Sistema**: tiempo encendido, IP, MQTT, botón **Silenciar** (manda `M` al ESP32 y apaga el buzzer hasta que
+  terminen las alertas) y barra de **brillo**.
+
+Los valores son `vscope global`, así que el ESP32 los escribe con `pageN.tX.txt` aunque esa página no esté visible.
+
+**Cargar el `.tft` sin microSD**, usando el ESP32 como puente USB↔pantalla:
+1. Sube `firmware/NextionBridge` compilado a 9600:
+   `arduino-cli compile --upload -p COM3 --fqbn esp32:esp32:esp32s3 --build-property "compiler.cpp.extra_flags=-DBAUD=9600" firmware/NextionBridge`
+2. Carga la pantalla: `python firmware/NextionBridge/upload_tft.py COM3 firmware/IASO/nextion/IASO.tft 9600`
+3. Vuelve a subir `firmware/IASO`.
+
+Si una carga se interrumpe, la pantalla se queda en "writing data…": desconéctale la corriente unos 10 s y repite.
 
 ## Módulos del Hackathon → implementación
 | Módulo (PDF) | Qué hace este prototipo |
@@ -42,7 +69,7 @@ El `.HMI` no se puede generar desde código.
 | Cardiovascular | BPM + HRV (KY-039), alerta por rango fijo y por desviación >25 % del basal propio |
 | Sueño | `act` active/rest por vibración (KY-002), `rest_min` = duración del descanso actual, `move` = movimientos por muestra, `light` para contexto de ciclo |
 | Estrés | alerta `ESTRES` si la HRV cae >40 % bajo su basal (sin GSR en el kit) |
-| Radiación | conteo de pulsos Geiger en GPIO33 → CPM |
+| Radiación | conteo de pulsos Geiger en GPIO15 → CPM |
 | Óseo / inmunológico / perfil basal | carga manual en el dashboard → `iaso/<ASTRO_ID>/lab` (retained) |
 | Registro temporal / .csv | el dashboard guarda el historial de la sesión y lo descarga en .csv para el análisis en Python |
 
@@ -53,9 +80,11 @@ Prueba rápida: `mosquitto_sub -h test.mosquitto.org -t "iaso/<ASTRO_ID>/#" -v`
 
 ## Lo que el kit NO cubre (del PDF del hackathon)
 - **SpO₂, ECG, presión arterial, GSR/electrodérmica**: no hay sensor en el kit (el KY-039 da pulso, no SpO₂). Añadir MAX30102, AD8232, sensor GSR.
-- **Radiación**: ningún KY detecta radiación ionizante (el Hall KY-003/024 es magnético). Hace falta un tubo Geiger; el firmware ya cuenta pulsos en GPIO33.
+- **Radiación**: ningún KY detecta radiación ionizante (el Hall KY-003/024 es magnético). Hace falta un tubo Geiger; el firmware ya cuenta pulsos en GPIO15.
 - **Acelerómetro**: el kit no trae uno; el KY-002 (vibración) solo detecta "hubo movimiento", no aceleración ni patrones finos. Añadir MPU6050 para sueño/actividad reales.
-- **Análisis multimodal, modelos predictivos y recomendaciones** (Python, datasets NASA): van en el servidor, fuera de este nodo. Los datos de laboratorio ya se capturan en el dashboard.
+- **Modelos predictivos y recomendaciones** (datasets NASA): no están hechos. `estacion.py` hace estadística descriptiva
+  y reglas por umbral, no predicción. Los datos de laboratorio se capturan en el dashboard del ESP32, pero la estación
+  todavía no los analiza.
 - La Nextion NX3224T024 es un TFT resistivo, no OLED.
 
 ## Límites
