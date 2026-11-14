@@ -35,12 +35,12 @@ cambia al canal de tu router, y el celular puede desconectarse un momento.
 |---|---|---|---|
 | Pulso | KY-039 | GPIO1 | BPM + HRV (RMSSD) |
 | Fotorresistor | KY-018 | GPIO4 | luz (ciclo sueño) |
-| Temp. corporal | KY-001 (DS18B20) | GPIO5 (+pull-up 4.7k si el módulo no la trae) | temperatura de piel |
+| Temp. corporal | KY-013 (placa HW-498, termistor NTC) | GPIO5 (analógico) | temperatura de piel; si al calentarlo baja, pon `NTC_HIGH 1` |
 | Temp/humedad | KY-015 (DHT11) | GPIO6 | cabina |
 | Vibración | KY-002 | GPIO7 | movimiento → activo/rest |
 | Radiación | contador Geiger externo | GPIO15 | CPM |
 | Buzzer activo | KY-012 | GPIO21 | alarma |
-| Nextion | NX3224T024 | TX→GPIO16, RX→GPIO17, +5V→5V, GND | UI local |
+| Nextion | NX3224T024 | TX→GPIO17, RX→GPIO18, +5V→5V, GND | UI local |
 
 Compilar con la placa **ESP32S3 Dev Module** (`esp32:esp32:esp32s3`). Si la placa tiene dos USB, usa el marcado **COM/UART**.
 
@@ -96,4 +96,4 @@ Prueba rápida: `mosquitto_sub -h test.mosquitto.org -t "iaso/<ASTRO_ID>/#" -v`
 
 ## Límites
 - El broker público no tiene autenticación ni privacidad: ASTRO_ID único y solo datos de prueba. Para algo serio usa un Mosquitto propio con usuario/TLS.
-- KY-039/DHT11/DS18B20 son sensores didácticos, no médicos: tendencia, no diagnóstico.
+- KY-039/DHT11/KY-013 son sensores didácticos, no médicos: tendencia, no diagnóstico.

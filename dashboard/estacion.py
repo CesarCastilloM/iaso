@@ -101,7 +101,7 @@ def estudio(rs):
     for k in ("hr", "temp"):
         m = M[k]
         if not m["n"]:
-            H.append(f"{m['nombre']}: sin lecturas ({'coloca el dedo en el KY-039' if k == 'hr' else 'revisa el DS18B20 y su pull-up 4.7k'}).")
+            H.append(f"{m['nombre']}: sin lecturas ({'coloca el dedo en el KY-039' if k == 'hr' else 'revisa el KY-013 en GPIO5'}).")
             continue
         s = f"{m['nombre']}: promedio {m['media']} {m['unidad']} ({m['min']:g}–{m['max']:g}), {m['en_rango']}% del tiempo en rango normal"
         if m["cobertura"] < 80: s += f"; solo {m['cobertura']}% de las muestras tienen lectura"

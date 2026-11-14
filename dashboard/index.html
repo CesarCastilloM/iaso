@@ -103,7 +103,7 @@ function showManual(kind,d){const p=kind==="lab"?"a_":"b_";
 if(local){
  const poll=()=>fetch("/data").then(r=>r.json()).then(d=>{st.textContent="nodo ESP32 · red local";show(d)})
   .catch(()=>st.textContent="sin conexión con el ESP32");
- poll();setInterval(poll,2500);
+ poll();setInterval(poll,500);
  fetch("/perfil").then(r=>r.json()).then(showPerfil).catch(()=>{});
  ["lab","basal"].forEach(kind=>fetch("/"+kind).then(r=>r.json()).then(d=>showManual(kind,d)).catch(()=>{}));
  saveManual=(kind,d)=>fetch("/"+kind,{method:"POST",body:JSON.stringify(d)}).then(r=>{if(!r.ok)throw 0});

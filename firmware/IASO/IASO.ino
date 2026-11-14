@@ -1,9 +1,7 @@
 // IASO - monitor de signos vitales de astronauta. ESP32 + Nextion NX3224T024 + kit KY-xxx -> MQTT.
-// Librerias (Library Manager): PubSubClient, OneWire, DallasTemperature, DHT sensor library.
+// Librerias (Library Manager): PubSubClient, DHT sensor library.
 #include <WiFi.h>
 #include <PubSubClient.h>
-#include <OneWire.h>
-#include <DallasTemperature.h>
 #include <DHT.h>
 #include <WebServer.h>
 #include <Preferences.h>
@@ -19,9 +17,17 @@ String perfilJson;     // perfil del astronauta (sexo, nacimiento, altura, peso,
 
 WiFiClient net;
 PubSubClient mqtt(net);
-OneWire ow(PIN_DS18);
-DallasTemperature ds(&ow);
 DHT dht(PIN_DHT, DHT11);
+
+// KY-013: NTC 10k (Beta 3950) en divisor con 10k a 3V3. -127 = sin sensor (pin en 0 V o en 3.3 V)
+// el ADC del S3 satura cerca de 3.1 V; 0..50 C da ~0.7..2.6 V, asi que fuera de 0.3..3.0 V es cableado malo
+float bodyTemp() {
+  uint32_t mv = 0; for (int i = 0; i < 16; i++) mv += analogReadMilliVolts(PIN_TEMP);
+  mv /= 16;
+  if (mv < 300 || mv > 3000) return -127;
+  float r = NTC_HIGH ? 10000.0f * (3300.0f / mv - 1) : 10000.0f * mv / (3300.0f - mv);
+  return 1.0f / (1 / 298.15f + logf(r / 10000.0f) / 3950.0f) - 273.15f;
+}
 
 // ---- pulso (KY-039): deteccion de picos + IBI para BPM y HRV (RMSSD) ----
 #define NIBI 20
@@ -119,8 +125,7 @@ void setup() {
   pinMode(PIN_VIB, INPUT_PULLUP); pinMode(PIN_RAD, INPUT); pinMode(PIN_BUZZ, OUTPUT);
   attachInterrupt(PIN_VIB, onVib, FALLING);
   attachInterrupt(PIN_RAD, onRad, FALLING);
-  ds.begin(); dht.begin();
-  ds.setWaitForConversion(false);
+  dht.begin();
   mqtt.setServer(MQTT_HOST, MQTT_PORT);
   mqtt.setBufferSize(1024);  // el default (256 B) corta la telemetria con alertas y los datos de laboratorio
   analogSetAttenuation(ADC_11db);
@@ -163,20 +168,22 @@ void loop() {
   uint32_t restMin = still > REST_MS ? still / 60000 : 0;  // modulo de sueno: duracion aprox. del descanso actual
 
   float hr = bpm(), hrv = rmssd();
-  float tb = ds.getTempCByIndex(0); ds.requestTemperatures();  // lectura de la conversion anterior
+  float tb = bodyTemp();
   float tc = dht.readTemperature(), hum = dht.readHumidity();
   int light = analogRead(PIN_LIGHT);
 
   // alertas: rangos fijos + desviacion respecto al basal propio
   String al = "";
   if (hr > 0) {
+    // basal: ~1 min de calentamiento y constante de tiempo ~4 min, sin importar PUBLISH_MS
+    const int warm = 60000 / PUBLISH_MS; const float k = 0.02f * PUBLISH_MS / 5000;
     if (hr > 120 || hr < 45) al += "HR ";
-    if (hrN >= 12 && fabsf(hr - baseHr) > 0.25f * baseHr) al += "HR_BASAL ";
+    if (hrN >= warm && fabsf(hr - baseHr) > 0.25f * baseHr) al += "HR_BASAL ";
     // modulo de estres: caida de HRV >40% bajo el basal (sin GSR en el kit)
-    if (hrN >= 12 && hrv > 0 && hrv < 0.6f * baseHrv) al += "ESTRES ";
-    baseHr = hrN ? baseHr + 0.02f * (hr - baseHr) : hr;
-    baseHrv = hrN ? baseHrv + 0.02f * (hrv - baseHrv) : hrv;
-    if (hrN < 100) hrN++;
+    if (hrN >= warm && hrv > 0 && hrv < 0.6f * baseHrv) al += "ESTRES ";
+    baseHr = hrN ? baseHr + k * (hr - baseHr) : hr;
+    baseHrv = hrN ? baseHrv + k * (hrv - baseHrv) : hrv;
+    if (hrN < warm) hrN++;
   }
   if (tb > -100 && (tb >= 38 || tb <= 35)) al += "TEMP ";
   if (!isnan(tc) && tc > 30) al += "CABINA ";
@@ -186,8 +193,8 @@ void loop() {
 
   snprintf(js, sizeof js,
     "{\"hr\":%.0f,\"hrv\":%.0f,\"temp\":%.1f,\"cab_t\":%.1f,\"cab_h\":%.0f,\"move\":%u,\"act\":\"%s\",\"rest_min\":%lu,"
-    "\"rad_cpm\":%.1f,\"light\":%d,\"alerts\":\"%s\",\"up\":%lu}",
-    hr, hrv, tb, isnan(tc) ? 0 : tc, isnan(hum) ? 0 : hum, vib, act, restMin, cpm, light, al.c_str(), millis() / 1000);
+    "\"rad_cpm\":%.1f,\"light\":%d,\"alerts\":\"%s\",\"up\":%.1f}",
+    hr, hrv, tb, isnan(tc) ? 0 : tc, isnan(hum) ? 0 : hum, vib, act, restMin, cpm, light, al.c_str(), millis() / 1000.0f);  // up con decimas: los visores lo usan para no repetir muestras
   Serial.println(js);
 
   wifiMqtt();

@@ -1,7 +1,7 @@
 // Puente USB <-> Nextion para cargar el .tft sin microSD (Nextion Editor -> Upload, COM del ESP32, 9600 baud).
 // Despues de cargar, vuelve a subir firmware/IASO.
-#define NEX_RX 16
-#define NEX_TX 17
+#define NEX_RX 17  // igual que firmware/IASO/config.h
+#define NEX_TX 18
 #ifndef BAUD
 #define BAUD 115200  // debe coincidir con la velocidad actual de la pantalla (9600 de fabrica)
 #endif
