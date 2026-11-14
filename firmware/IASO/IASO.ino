@@ -15,6 +15,7 @@ Preferences prefs;
 char js[384] = "{}";   // ultima telemetria, servida en /data
 String labJson;        // ultimos datos manuales (laboratorio, SpO2, presion...), guardados en flash
 String basalJson;      // basal individual de esos mismos datos, guardado en flash
+String perfilJson;     // perfil del astronauta (sexo, nacimiento, altura, peso, meta de ejercicio), guardado en flash
 
 WiFiClient net;
 PubSubClient mqtt(net);
@@ -88,7 +89,7 @@ void nexInput() {
     }
 }
 
-// guarda un JSON manual (lab o basal) en flash y lo publica retained si hay MQTT
+// guarda un JSON manual (lab, basal o perfil) en flash y lo publica retained si hay MQTT
 void saveManual(const char* name, String& store) {
   String b = web.arg("plain");
   if (b.length() > 600 || !b.startsWith("{")) { web.send(400); return; }
@@ -131,6 +132,7 @@ void setup() {
   prefs.begin("iaso");
   labJson = prefs.getString("lab", "{}");
   basalJson = prefs.getString("basal", "{}");
+  perfilJson = prefs.getString("perfil", "{}");
   web.on("/", [] { web.send_P(200, "text/html; charset=utf-8", DASHBOARD_HTML); });
   web.on("/data", [] { web.send(200, "application/json", js); });
   // /lab = valores actuales, /basal = referencia individual; el dashboard compara uno contra otro
@@ -138,6 +140,8 @@ void setup() {
   web.on("/lab", HTTP_POST, [] { saveManual("lab", labJson); });
   web.on("/basal", HTTP_GET, [] { web.send(200, "application/json", basalJson); });
   web.on("/basal", HTTP_POST, [] { saveManual("basal", basalJson); });
+  web.on("/perfil", HTTP_GET, [] { web.send(200, "application/json", perfilJson); });
+  web.on("/perfil", HTTP_POST, [] { saveManual("perfil", perfilJson); });
   web.begin();
   Serial.printf("Red %s -> http://%s\n", AP_SSID, WiFi.softAPIP().toString().c_str());
 
