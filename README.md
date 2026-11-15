@@ -163,8 +163,15 @@ KY-018 Photoresistor: Detects ambient light levels
 </p>
 
 KY-012 Active Buzzer: Produces audible alerts
+<p align="center">
+  <img src="images/Buzzer.png" alt="Image Alt Text" width="400">
+</p>
 
 Nextion NX3224T024: Provides a local touchscreen monitoring interface
+<p align="center">
+  <img src="images/Nextion.webp" alt="Image Alt Text" width="400">
+</p>
+
 
 External Geiger Counter(FUTURE implement): Provides radiation pulse measurements
 
