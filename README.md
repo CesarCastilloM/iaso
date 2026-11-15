@@ -38,7 +38,7 @@ The system integrates real-time monitoring capabilities, individual baseline com
 
 ## About the Project
 
-Submission for the NASA International Space Apps Challenge.
+Submission for the NASA International Space Apps Challenge. https://www.spaceappschallenge.org/2026/challenges/health-monitoring-software/
 
 Space exploration exposes astronauts to demanding conditions that can affect their physical health and overall well-being. During space missions, changes in gravity, radiation exposure, isolation, sleep disruption, and other environmental factors can influence physiological processes and create challenges for continuous health monitoring.
 
