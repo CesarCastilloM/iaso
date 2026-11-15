@@ -269,7 +269,7 @@ These measurements provide additional context for understanding the conditions s
 - Radiation Measurements: An external Geiger counter can provide pulse information that the ESP32-S3 uses to calculate counts per minute (CPM).
 
 <p align="center">
-  <img src="images/sentria_environmental_monitoring.png" alt="SENTRIA Environmental Monitoring" width="800">
+  <img src="images/sentria_environmental_monitoring.jpeg" alt="SENTRIA Environmental Monitoring" width="800">
 </p>
 
 <p align="center">Above: Environmental and activity monitoring components.</p>
