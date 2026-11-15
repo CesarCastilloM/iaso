@@ -129,7 +129,7 @@ The hardware prototype is the physical foundation of SENTRIA. It integrates the 
 The ESP32-S3 acts as the central processing unit, receiving sensor measurements and coordinating communication with the monitoring interfaces. The system also includes a Nextion touchscreen display, which provides local access to important measurements, system information, and alerts.
 
 <p align="center">
-  <img src="images/sentria_hardware.jpg" alt="SENTRIA Hardware Prototype" width="800">
+  <img src="images/prototype.jpeg" alt="SENTRIA Hardware Prototype" width="800">
 </p>
 
 <p align="center">Above: SENTRIA hardware prototype and its main electronic components.</p>
