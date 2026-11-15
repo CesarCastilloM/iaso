@@ -235,7 +235,7 @@ The current prototype focuses on three main physiological measurements:
 - Body Temperature: The KY-013 thermistor provides temperature measurements through an analog input of the ESP32-S3.
 
 <p align="center">
-  <img src="SENTRIA Physiological MonitoringV2.jpeg" alt="SENTRIA Physiological Monitoring" width="800">
+  <img src="images/SENTRIA Physiological MonitoringV2.jpeg" alt="SENTRIA Physiological Monitoring" width="800">
 </p>
 
 <p align="center">Above: Physiological measurements integrated into SENTRIA.</p>
