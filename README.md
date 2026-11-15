@@ -199,7 +199,8 @@ The Nextion display provides three main sections:
 - Vitals: Displays heart rate, HRV, body temperature, and alerts.
 - Environment: Displays radiation, cabin conditions, activity, and light information.
 - System: Displays system status, uptime, connection information, and configuration options.
-PROTOTYPE TRIAL
+
+**VIDEO PROTOTYPE TRIAL**
 <p align="center">
   <a href="https://youtube.com/shorts/NkvxhH5F8uo">
     <img src="https://img.youtube.com/vi/NkvxhH5F8uo/hqdefault.jpg"
