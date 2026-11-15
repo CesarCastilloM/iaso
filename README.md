@@ -205,11 +205,11 @@ SENTRIA incorporates sensors and data-entry capabilities to collect and organize
 
 The current prototype focuses on three main physiological measurements:
 
-Heart Rate: The KY-039 pulse sensor detects pulse signals that are processed to estimate beats per minute (BPM).
+- Heart Rate: The KY-039 pulse sensor detects pulse signals that are processed to estimate beats per minute (BPM).
 
-Heart Rate Variability (HRV): The system calculates an HRV indicator using the intervals between detected heartbeats.
+- Heart Rate Variability (HRV): The system calculates an HRV indicator using the intervals between detected heartbeats.
 
-Body Temperature: The KY-013 thermistor provides temperature measurements through an analog input of the ESP32-S3.
+- Body Temperature: The KY-013 thermistor provides temperature measurements through an analog input of the ESP32-S3.
 
 <p align="center">
   <img src="images/sentria_physiological_monitoring.png" alt="SENTRIA Physiological Monitoring" width="800">
@@ -225,17 +225,15 @@ By organizing these measurements in one platform, SENTRIA provides a foundation 
 
 In addition to physiological measurements, SENTRIA incorporates sensors to monitor environmental conditions and activity-related information.
 
-These measurements provide additional context for understanding the conditions surrounding the astronaut.
+These measurements provide additional context for understanding the conditions surrounding the astronaut. The current prototype includes:
 
-The current prototype includes:
+- Cabin Temperature and Humidity: The DHT11 sensor measures environmental temperature and relative humidity.
 
-Cabin Temperature and Humidity: The DHT11 sensor measures environmental temperature and relative humidity.
+- Light Levels: The KY-018 photoresistor detects changes in ambient light, providing contextual information that can help interpret sleep and activity patterns.
 
-Light Levels: The KY-018 photoresistor detects changes in ambient light, providing contextual information that can help interpret sleep and activity patterns.
+- Movement Detection: The KY-002 vibration sensor detects movement or activity changes.
 
-Movement Detection: The KY-002 vibration sensor detects movement or activity changes.
-
-Radiation Measurements: An external Geiger counter can provide pulse information that the ESP32-S3 uses to calculate counts per minute (CPM).
+- Radiation Measurements: An external Geiger counter can provide pulse information that the ESP32-S3 uses to calculate counts per minute (CPM).
 
 <p align="center">
   <img src="images/sentria_environmental_monitoring.png" alt="SENTRIA Environmental Monitoring" width="800">
@@ -253,15 +251,15 @@ Each sensor provides information through its corresponding input. The microcontr
 
 The system follows a continuous data acquisition process:
 
-Sensor Acquisition: Sensors collect physiological and environmental information.
+- Sensor Acquisition: Sensors collect physiological and environmental information.
 
-Signal Processing: The ESP32-S3 processes the incoming signals and calculates the corresponding measurements.
+- Signal Processing: The ESP32-S3 processes the incoming signals and calculates the corresponding measurements.
 
-Data Organization: Measurements are organized into structured telemetry information.
+- Data Organization: Measurements are organized into structured telemetry information.
 
-Communication: Data is transmitted through MQTT when an external network connection is configured.
+- Communication: Data is transmitted through MQTT when an external network connection is configured.
 
-Visualization: The monitoring interfaces display the available information and system alerts.
+- Visualization: The monitoring interfaces display the available information and system alerts.
 
 <p align="center">
   <img src="images/sentria_data_acquisition.png" alt="SENTRIA Data Acquisition Architecture" width="800">
@@ -289,9 +287,9 @@ The dashboard displays the current value, its corresponding baseline, and the pe
 
 The alert system incorporates two main approaches:
 
-Threshold-Based Alerts: Identifies measurements that exceed configured limits.
+- Threshold-Based Alerts: Identifies measurements that exceed configured limits.
 
-Baseline Deviation Alerts: Identifies significant changes compared with an individual's established reference values.
+- Baseline Deviation Alerts: Identifies significant changes compared with an individual's established reference values.
 
 The system also includes an audible alert through the KY-012 buzzer and visual notifications through the monitoring interfaces.
 
@@ -317,15 +315,7 @@ The Python analysis station retrieves measurements from the ESP32-S3 and stores 
 
 The station includes graphical representations of individual measurements, with reference ranges to provide context when interpreting the collected data.
 
-Users can review information across different time periods:
-
-15 minutes
-
-1 hour
-
-6 hours
-
-Complete monitoring session
+Users can review information across different time periods: 15 minutes, 1 hour, 6 hours or Complete monitoring session
 
 <p align="center">
   <img src="images/sentria_historical_data.png" alt="SENTRIA Historical Data Analysis" width="800">
@@ -339,21 +329,21 @@ In addition to visualizing measurements, the Python station calculates descripti
 
 The available analysis includes:
 
-Mean, minimum, and maximum values.
+- Mean, minimum, and maximum values.
 
-Standard deviation.
+- Standard deviation.
+  
+- Hourly measurement trends.
 
-Hourly measurement trends.
+- Percentage of time within configured reference ranges.
 
-Percentage of time within configured reference ranges.
+- Alert episodes organized by type.
 
-Alert episodes organized by type.
+- Rest and activity information.
 
-Rest and activity information.
+- Connection interruptions.
 
-Connection interruptions.
-
-Automatically generated textual findings based on the collected data.
+- Automatically generated textual findings based on the collected data.
 
 The analysis can be performed over different time periods, allowing users to review both short-term changes and longer monitoring sessions.
 
@@ -377,25 +367,12 @@ The prototype uses a public Mosquitto test broker to demonstrate wireless data t
 
 The system organizes information into different MQTT topics:
 
-MQTT Topic
-
-Description
-
-iaso/<ASTRO_ID>/telemetry
-
-Publishes real-time sensor measurements in JSON format.
-
-iaso/<ASTRO_ID>/status
-
-Reports whether the device is online or offline.
-
-iaso/<ASTRO_ID>/lab
-
-Stores manually entered health and laboratory information.
-
-iaso/<ASTRO_ID>/basal
-
-Stores individual baseline values.
+| MQTT Topic | Description |
+|---|---|
+| `iaso/<ASTRO_ID>/telemetry` | Publishes real-time sensor measurements in JSON format. |
+| `iaso/<ASTRO_ID>/status` | Reports whether the device is online or offline. |
+| `iaso/<ASTRO_ID>/lab` | Stores manually entered health and laboratory information. |
+| `iaso/<ASTRO_ID>/basal` | Stores individual baseline values. |
 
 <p align="center">
   <img src="images/sentria_mqtt.png" alt="SENTRIA MQTT Communication" width="800">
@@ -439,7 +416,6 @@ The architecture can be divided into the following stages:
 | Processing | ESP32-S3 | Reads sensor signals, processes measurements, and organizes data. |
 | Local Visualization | Nextion Display | Presents measurements, alerts, and system information. |
 | Local Web Access | ESP32-S3 Wi-Fi Access Point | Provides access to the dashboard without external internet. |
-| Wireless Communication | MQTT | Publishes information to an external broker. |
 | Data Visualization | Web Dashboard | Displays measurements, baselines, and alerts. |
 | Historical Analysis | Python Analysis Station | Stores records and calculates descriptive statistics. |
 
@@ -453,263 +429,77 @@ The project focuses on integrating different types of astronaut health informati
 
 The following table summarizes the relationship between the project's main objectives and the current implementation:
 
-Monitoring Area
-
-SENTRIA Implementation
-
-Current Status
-
-Cardiovascular Monitoring
-
-Heart rate and HRV estimation using the KY-039 sensor.
-
-Implemented
-
-Body Temperature
-
-Temperature measurement using the KY-013 thermistor.
-
-Implemented
-
-Environmental Monitoring
-
-Cabin temperature and humidity through DHT11.
-
-Implemented
-
-Light Monitoring
-
-Ambient light detection through KY-018.
-
-Implemented
-
-Activity Monitoring
-
-Movement detection using KY-002.
-
-Implemented
-
-Radiation Monitoring
-
-Pulse counting from an external Geiger counter.
-
-Hardware integration supported
-
-Sleep Context
-
-Activity, rest duration, movement, and light information.
-
-Basic implementation
-
-Stress Monitoring
-
-HRV deviation compared with individual baseline.
-
-Basic implementation
-
-Oxygen Saturation
-
-Manual data entry through the dashboard.
-
-Manual entry
-
-Blood Pressure
-
-Manual data entry through the dashboard.
-
-Manual entry
-
-Individual Baselines
-
-Comparison between current and personalized reference values.
-
-Implemented
-
-Alert System
-
-Configurable thresholds and baseline deviation alerts.
-
-Implemented
-
-Historical Data
-
-CSV records and Python statistical analysis.
-
-Implemented
-
-Predictive Analysis
-
-Advanced predictive models and automated NASA dataset integration.
-
-Future development
+| Monitoring Area | SENTRIA Implementation | Current Status |
+|---|---|---|
+| Cardiovascular Monitoring | Heart rate and HRV estimation using the KY-039 sensor. | Implemented |
+| Body Temperature | Temperature measurement using the KY-013 thermistor. | Implemented |
+| Environmental Monitoring | Cabin temperature and humidity measurement through the DHT11 sensor. | Implemented |
+| Light Monitoring | Ambient light detection through the KY-018 sensor. | Implemented |
+| Activity Monitoring | Movement detection using the KY-002 sensor. | Implemented |
+| Radiation Monitoring | Pulse counting from an external Geiger counter. | Hardware integration supported |
+| Sleep Context | Activity, rest duration, movement, and light information. | Basic implementation |
+| Stress Monitoring | HRV deviation compared with individual baseline. | Basic implementation |
+| Oxygen Saturation | Manual data entry through the dashboard. | Manual entry |
+| Blood Pressure | Manual data entry through the dashboard. | Manual entry |
+| Individual Baselines | Comparison between current and personalized reference values. | Implemented |
+| Alert System | Configurable thresholds and baseline deviation alerts. | Implemented |
+| Historical Data | CSV records and Python statistical analysis. | Implemented |
+| Predictive Analysis | Advanced predictive models and automated NASA dataset integration. | Future development |
 
 The current prototype demonstrates an integrated monitoring approach while recognizing that some health indicators require additional medical-grade sensors and validation before they can be measured automatically.
 
 ## Installation and Setup
 
-This section describes the basic steps required to configure and run the SENTRIA prototype.
-
-Hardware Requirements
-
+### 1. Hardware Requirements
 The following components are required to assemble the current prototype:
-
-Component
-
-Quantity
-
-Purpose
-
-ESP32-S3 Development Board
-
-1
-
-Main processing unit
-
-KY-039 Pulse Sensor
-
-1
-
-Pulse signal acquisition
-
-KY-013 Temperature Sensor
-
-1
-
-Body temperature measurement
-
-KY-015 DHT11 Module
-
-1
-
-Environmental temperature and humidity
-
-KY-018 Photoresistor
-
-1
-
-Light detection
-
-KY-002 Vibration Sensor
-
-1
-
-Movement detection
-
-External Geiger Counter
-
-1
-
-Radiation pulse acquisition
-
-KY-012 Active Buzzer
-
-1
-
-Audible alerts
-
-Nextion NX3224T024
-
-1
-
-Touchscreen interface
-
-Jumper Wires and Breadboard
-
-As needed
-
-Electrical connections
-
-Software Requirements
-
-Software or Tool
-
-Purpose
-
-Arduino IDE
-
-ESP32-S3 firmware development and upload
-
-ESP32 Arduino Core
-
-Microcontroller support
-
-Nextion Editor
-
-Touchscreen interface development
-
-Python 3
-
-Historical data analysis station
-
-MQTT Broker
-
-Wireless telemetry communication
-
-Web Browser
-
-Access to the monitoring dashboard
-
-Visual Studio Code
-
-Source code editing and project management
-
-Firmware Configuration
-
-Clone or download the SENTRIA repository.
-
-Open the firmware project located in firmware/IASO/.
-
-Open config.h and configure the Wi-Fi credentials, MQTT broker, device identifier, and sensor pins.
-
-Select the appropriate ESP32-S3 board configuration in Arduino IDE.
-
-Compile and upload the firmware.
-
-The firmware should be compiled using the ESP32S3 Dev Module board configuration.
-
-Dashboard Configuration
-
-The web dashboard is located in:
-
-dashboard/index.html
-
-Whenever the dashboard is modified, regenerate the embedded HTML header before uploading the firmware:
-
-python dashboard/gen_header.py
-
-This updates the file used by the ESP32-S3 to serve the dashboard.
-
-Local Dashboard Access
-
-SENTRIA can operate without an external internet connection.
-
-Power on the ESP32-S3.
-
-Connect a computer or mobile device to the Wi-Fi network created by the ESP32.
-
-The default access point is IASO-astro01.
-
-Open a web browser.
-
-Navigate to:
-
-http://192.168.4.1
-
-The dashboard will display the information available from the connected sensors.
-
-The access point name and password can be changed in the firmware configuration.
-
-Python Analysis Station
-
-To run the local analysis station:
-
-python dashboard/estacion.py
-
-Then open the following address in a web browser:
-
-http://localhost:8080
-
-The analysis station retrieves measurements from the ESP32-S3, stores them in CSV files, and provides graphical and statistical summaries.
+| Component | Quantity | Purpose |
+|---|---:|---|
+| ESP32-S3 Development Board | 1 | Main processing unit |
+| KY-039 Pulse Sensor | 1 | Pulse signal acquisition |
+| KY-013 Temperature Sensor | 1 | Body temperature measurement |
+| KY-015 DHT11 Module | 1 | Environmental temperature and humidity measurement |
+| KY-018 Photoresistor | 1 | Ambient light detection |
+| KY-002 Vibration Sensor | 1 | Movement detection |
+| External Geiger Counter | 1 | Radiation pulse acquisition |
+| KY-012 Active Buzzer | 1 | Audible alerts |
+| Nextion NX3224T024 | 1 | Touchscreen interface |
+| Jumper Wires and Breadboard | As needed | Electrical connections |
+
+### 2. Software Requirements
+The following software and tools are used to develop, configure, and operate SENTRIA:
+
+| Software or Tool | Purpose |
+|---|---|
+| Visual Studio Code | Firmware development, source code editing, and project management |
+| PlatformIO / ESP32 Development Tools | ESP32-S3 firmware compilation and upload |
+| Nextion Editor | Touchscreen interface development |
+| Python 3 | Historical data analysis station |
+| Web Browser | Access to the monitoring dashboard |
+
+### 3. Firmware Configuration
+Follow these steps to configure and upload the firmware:
+1. Clone or download the SENTRIA repository.
+2. Open the firmware project located in firmware/IASO/.
+3. Open config.h and configure the Wi-Fi credentials, MQTT broker, device identifier, and sensor pins.
+4. Select the appropriate ESP32-S3 board configuration in Arduino IDE.
+5. Compile and upload the firmware to the ESP32-S3.
+Board configuration: The firmware should be compiled using the ESP32S3 Dev Module board configuration.
+
+### 4. Dashboard Configuration
+1.Power on the ESP32-S3.
+2.Connect to the Wi-Fi network:
+- SSID: IASO-astro01
+- Password: iaso1234
+3.Open a browser and access:
+- http://192.168.4.1
+- 
+### 5. Running the Analysis Station
+
+Run the following command from the project directory:
+
+  python dashboard/estacion.py
+
+Then open http://localhost:8080 in your browser to access historical data analysis.
 
 ## Results and Validation
 
@@ -719,41 +509,24 @@ The implemented features provide a foundation for collecting physiological and e
 
 The main results include:
 
-Feature
-
-Result
-
-Sensor Integration
-
-Multiple sensors connected to the ESP32-S3.
-
-Local Monitoring
-
-Measurements displayed through the Nextion touchscreen.
-
-Web Dashboard
-
-Browser-based visualization of collected information.
-
-MQTT Communication
-
-Telemetry transmission through an MQTT broker.
-
-Individual Baselines
-
-Comparison between current measurements and personal reference values.
-
-Alerts
-
-Visual and audible notifications based on configured conditions.
-
-Historical Records
-
-Measurement storage in CSV format.
-
-Statistical Analysis
-
-Descriptive analysis through the Python station.
+- Feature
+- Result
+- Sensor Integration
+- Multiple sensors connected to the ESP32-S3.
+- Local Monitoring
+- Measurements displayed through the Nextion touchscreen.
+- Web Dashboard
+- Browser-based visualization of collected information.
+- MQTT Communication
+- Telemetry transmission through an MQTT broker.
+- Individual Baselines
+- Comparison between current measurements and personal reference values.
+- Alerts
+- Visual and audible notifications based on configured conditions.
+- Historical Records
+- Measurement storage in CSV format.
+- Statistical Analysis
+- Descriptive analysis through the Python station.
 
 <p align="center">
   <img src="images/sentria_prototype_results.png" alt="SENTRIA Prototype Results" width="800">
@@ -769,91 +542,36 @@ Although SENTRIA provides an integrated monitoring prototype, some capabilities 
 
 Understanding these limitations is important for identifying the next steps in the development of the project.
 
-Current Limitations
+### Current Limitations
 
-Area
+| Area | Current Limitation |
+|---|---|
+| Heart Rate | The KY-039 is an educational sensor that requires further validation. |
+| HRV | Calculated from heartbeat intervals and affected by signal quality. |
+| SpO₂ | No automatic oxygen saturation sensor is currently integrated. |
+| Blood Pressure | Measurements must be entered manually. |
+| Radiation | Requires an external Geiger counter, not included in the sensor kit. |
+| Movement | The KY-002 detects vibration but does not provide detailed motion data. |
+| Stress | Uses HRV deviation as a basic indicator, not a clinical assessment. |
+| Predictive Models | Advanced predictive algorithms are not yet implemented. |
+| Data Security | MQTT security features are planned but not yet implemented. |
 
-Current Limitation
-
-Heart Rate
-
-KY-039 is an educational pulse sensor and requires further validation.
-
-HRV
-
-Calculated from detected heartbeat intervals and subject to signal quality.
-
-SpO₂
-
-No automatic oxygen saturation sensor is currently integrated.
-
-Blood Pressure
-
-Values must be entered manually.
-
-Radiation
-
-Requires an external Geiger counter; it is not included in the KY sensor kit.
-
-Movement
-
-KY-002 detects vibration or movement but does not provide detailed motion measurements.
-
-Stress
-
-Uses HRV deviation as a basic indicator, not a clinical stress assessment.
-
-Predictive Models
-
-Advanced predictive algorithms are not currently implemented.
-
-Data Security
-
-The public MQTT broker is intended only for testing and demonstration.
-
-Future Development
+### Future Development
 
 Future improvements could expand SENTRIA's monitoring capabilities and increase the reliability of the system.
 
-Proposed Improvement
+| Proposed Improvement | Objective |
+|---|---|
+| MAX30102 Sensor | Enable automatic heart rate and SpO₂ measurement. |
+| AD8232 ECG Module | Incorporate electrocardiogram signal acquisition. |
+| GSR Sensor | Add skin conductance measurements as another physiological indicator. |
+| MPU6050 Accelerometer and Gyroscope | Improve movement and activity monitoring. |
+| Medical-Grade Sensors | Increase measurement accuracy and reliability. |
+| Secure MQTT Broker | Implement authentication and encrypted communication. |
+| Predictive Models | Identify patterns and potential health risks. |
+| NASA Dataset Integration | Incorporate relevant external datasets for further analysis. |
+| Expanded Data Analysis | Improve historical analysis and generate more comprehensive reports. |
 
-Objective
-
-MAX30102 Sensor
-
-Add automatic heart rate and SpO₂ measurement capabilities.
-
-AD8232 ECG Module
-
-Incorporate electrocardiogram signal acquisition.
-
-GSR Sensor
-
-Add skin conductance measurements as an additional physiological indicator.
-
-MPU6050 Accelerometer and Gyroscope
-
-Improve movement and activity monitoring.
-
-Medical-Grade Sensors
-
-Improve measurement accuracy and reliability.
-
-Secure MQTT Broker
-
-Introduce authentication and encrypted communication.
-
-Predictive Models
-
-Explore algorithms for identifying patterns and potential health risks.
-
-NASA Dataset Integration
-
-Incorporate relevant external datasets for further analysis.
-
-Expanded Data Analysis
-
-Improve historical analysis and generate more comprehensive reports.
 
 These developments would help transform SENTRIA from an educational prototype into a more comprehensive astronaut health monitoring platform.
 
@@ -861,53 +579,20 @@ These developments would help transform SENTRIA from an educational prototype in
 
 The repository is organized into different directories to separate firmware, dashboard resources, analysis tools, and touchscreen interface files.
 
-File or Directory
 
-Description
-
-firmware/IASO/
-
-Main ESP32-S3 firmware project.
-
-firmware/IASO/config.h
-
-Configuration of Wi-Fi, MQTT, and hardware settings.
-
-firmware/IASO/dashboard_html.h
-
-Embedded dashboard HTML used by the firmware.
-
-firmware/IASO/nextion/
-
-Nextion Editor project and touchscreen resources.
-
-firmware/NextionBridge/
-
-Firmware and utilities for transferring files to the Nextion display.
-
-firmware/NextionBridge/upload_tft.py
-
-Python utility for uploading the Nextion TFT file.
-
-dashboard/index.html
-
-Main web monitoring dashboard.
-
-dashboard/gen_header.py
-
-Generates the dashboard header embedded in the firmware.
-
-dashboard/estacion.py
-
-Python station for collecting and analyzing monitoring data.
-
-dashboard/datos/
-
-Directory used to store historical CSV records.
-
-images/
-
-Images used in the project documentation.
+| File or Directory | Description |
+|---|---|
+| `firmware/IASO/` | Main ESP32-S3 firmware project. |
+| `firmware/IASO/config.h` | Configuration of Wi-Fi, MQTT, and hardware settings. |
+| `firmware/IASO/dashboard_html.h` | Embedded dashboard HTML used by the firmware. |
+| `firmware/IASO/nextion/` | Nextion Editor project and touchscreen resources. |
+| `firmware/NextionBridge/` | Firmware and utilities for transferring files to the Nextion display. |
+| `firmware/NextionBridge/upload_tft.py` | Python utility for uploading the Nextion TFT file. |
+| `dashboard/index.html` | Main web monitoring dashboard. |
+| `dashboard/gen_header.py` | Generates the dashboard header embedded in the firmware. |
+| `dashboard/estacion.py` | Python station for collecting and analyzing monitoring data. |
+| `dashboard/datos/` | Directory used to store historical CSV records. |
+| `images/` | Images used in the project documentation. |
 
 ## Scientific Support of the Project
 
@@ -941,57 +626,20 @@ Note: Add the exact scientific publications, NASA documents, and technical datas
 
 SENTRIA combines embedded programming, web technologies, wireless communication, and data analysis tools.
 
-Technology
-
-Application
-
-C++
-
-ESP32-S3 firmware development.
-
-HTML
-
-Structure of the web dashboard.
-
-CSS
-
-Dashboard visual presentation.
-
-JavaScript
-
-Dashboard functionality and data visualization.
-
-Python
-
-Historical data collection and statistical analysis.
-
-Arduino IDE
-
-Firmware compilation and upload.
-
-ESP32 Arduino Core
-
-ESP32-S3 development environment.
-
-MQTT
-
-Communication between the hardware and external applications.
-
-Mosquitto
-
-MQTT broker used for testing.
-
-Nextion Editor
-
-Development of the touchscreen interface.
-
-CSV
-
-Storage and export of historical measurements.
-
-Wi-Fi
-
-Local and external wireless communication.
+| Technology | Application |
+|---|---|
+| C++ | ESP32-S3 firmware development. |
+| HTML | Structure of the web dashboard. |
+| CSS | Dashboard visual presentation. |
+| JavaScript | Dashboard functionality and data visualization. |
+| Python | Historical data collection and statistical analysis. |
+| Visual Studio Code | Firmware development and source code management. |
+| ESP32 Arduino Core | Framework for ESP32-S3 development. |
+| Nextion Editor | Development of the touchscreen interface. |
+| CSV | Storage and export of historical measurements. |
+| Wi-Fi | Local wireless communication between the ESP32-S3 and connected devices. |
+| MQTT | Planned communication protocol for future remote telemetry. |
+| Mosquitto | Potential MQTT broker for future testing and communication. |
 
 ## Team Members and Their Contributions
 
