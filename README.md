@@ -85,10 +85,13 @@ Our goal is to create an accessible and expandable prototype that demonstrates h
 The following video presents SENTRIA's prototype, its main components, and the operation of its monitoring platform.
 
 <p align="center">
-  <a href="[VIDEO_LINK](https://youtu.be/PM9SsybX97w)">
-    <img src="images/video_thumbnail.png" alt="SENTRIA Video Demonstration" width="800">
+  <a href="https://www.youtube.com/watch?v=PM9SsybX97w">
+    <img src="https://img.youtube.com/vi/PM9SsybX97w/maxresdefault.jpg"
+         alt="SENTRIA Video Demonstration"
+         width="800">
   </a>
 </p>
+<p align="center"><em>Click the image to watch the SENTRIA demonstration.</em></p>
 
 <p align="center">Above: SENTRIA system demonstration.</p>
 
