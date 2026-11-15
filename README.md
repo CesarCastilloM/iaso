@@ -705,7 +705,7 @@ Through this collaboration, the team developed an integrated prototype that comb
 
 
 # RESUME OF USE
-# IASO — monitor de signos vitales de astronauta (prototipo)
+## Sentria — monitor de signos vitales de astronauta (prototipo)
 
 ESP32 + pantalla Nextion NX3224T024 + sensores del kit KY-xxx → MQTT (Mosquitto público) → dashboard web.
 Basado en `Hackathon.pdf` (módulos cardiovascular, sueño, estrés, radiación, alertas con perfil basal).
