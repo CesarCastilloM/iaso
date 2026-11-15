@@ -1,4 +1,4 @@
-# SETRIA — Intelligent Astronaut Health Monitoring System
+# SENTRIA — Intelligent Astronaut Health Monitoring System
 
 <p align="center">
   <img src="images/SENTRIA.png" alt="Image Alt Text" width="800">
@@ -6,9 +6,9 @@
 
 **Team: [SENTRIA](https://www.spaceappschallenge.org/2026/find-a-team/iaso/?tab=details)**
 
-An intelligent health monitoring system designed to support astronaut well-being during space missions through the integration of physiological and environmental data. SETRIA combines an ESP32-based hardware platform, multiple sensors, and a centralized monitoring interface to collect, process, and visualize relevant health indicators.
+An intelligent health monitoring system designed to support astronaut well-being during space missions through the integration of physiological and environmental data. SENTRIA combines an ESP32-based hardware platform, multiple sensors, and a centralized monitoring interface to collect, process, and visualize relevant health indicators.
 
-The system integrates real-time monitoring capabilities, individual baseline comparisons, and an alert mechanism to help identify potential physiological and environmental anomalies. Through a Nextion touchscreen display and a web-based dashboard, SETRIA provides an accessible visualization of collected information, supporting continuous health monitoring and data-driven decision-making in space environments.
+The system integrates real-time monitoring capabilities, individual baseline comparisons, and an alert mechanism to help identify potential physiological and environmental anomalies. Through a Nextion touchscreen display and a web-based dashboard, SENTRIA provides an accessible visualization of collected information, supporting continuous health monitoring and data-driven decision-making in space environments.
 
 
 ## Map of Contents
@@ -16,7 +16,7 @@ The system integrates real-time monitoring capabilities, individual baseline com
 1. [About the Project](#about-the-project)
 2. [Introduction](#introduction)
 3. [Video Demonstration](#video-demonstration)
-4. [SETRIA Monitoring Dashboard](#setria-monitoring-dashboard)
+4. [SENTRIA Monitoring Dashboard](#sentria-monitoring-dashboard)
 5. [Hardware Prototype](#hardware-prototype)
 6. [Physiological Monitoring](#physiological-monitoring)
 7. [Environmental Monitoring](#environmental-monitoring)
@@ -43,34 +43,34 @@ Submission for the NASA International Space Apps Challenge. https://www.spaceapp
 Space exploration exposes astronauts to demanding conditions that can affect their physical health and overall well-being. During space missions, changes in gravity, radiation exposure, isolation, sleep disruption, and other environmental factors can influence physiological processes and create challenges for continuous health monitoring.
 
 <p align="center">
-  <img src="./images/RADIATION.webp" alt="SETRIA Project" width="600">
+  <img src="./images/RADIATION.webp" alt="SENTRIA Project" width="600">
 </p>
 
-SETRIA is an intelligent astronaut health monitoring system designed to integrate physiological and environmental information into a centralized platform. The project aims to provide a comprehensive view of astronaut health by combining sensor-based data acquisition, embedded systems, data processing, and interactive visualization.
+SENTRIA is an intelligent astronaut health monitoring system designed to integrate physiological and environmental information into a centralized platform. The project aims to provide a comprehensive view of astronaut health by combining sensor-based data acquisition, embedded systems, data processing, and interactive visualization.
 
 The system uses an ESP32-S3 as its central hardware platform, connecting different sensors to collect information such as heart rate, heart rate variability (HRV), skin temperature, cabin temperature, humidity, light levels, and movement. These measurements are processed and organized to provide relevant information about the astronaut's physiological condition and surrounding environment.
 
-To make the collected information accessible, SETRIA incorporates two visualization interfaces: a Nextion touchscreen display for local monitoring and a web-based dashboard for viewing measurements, alerts, and individual baseline comparisons. The platform also incorporates MQTT communication to enable data transmission between the hardware and external monitoring interfaces.
+To make the collected information accessible, SENTRIA incorporates two visualization interfaces: a Nextion touchscreen display for local monitoring and a web-based dashboard for viewing measurements, alerts, and individual baseline comparisons. The platform also incorporates MQTT communication to enable data transmission between the hardware and external monitoring interfaces.
 
-An important component of SETRIA is its individual baseline approach. Rather than relying exclusively on generalized reference values, the system considers the astronaut's baseline measurements to identify deviations from their typical physiological patterns. This approach supports the identification of potential anomalies and provides additional context for interpreting collected data.
+An important component of SENTRIA is its individual baseline approach. Rather than relying exclusively on generalized reference values, the system considers the astronaut's baseline measurements to identify deviations from their typical physiological patterns. This approach supports the identification of potential anomalies and provides additional context for interpreting collected data.
 
 Our objective is to develop an integrated monitoring solution that supports astronaut health assessment during space missions by bringing together physiological measurements, environmental monitoring, data analysis, and alert mechanisms within a single system.
 
-SETRIA is conceived as a modular and expandable platform, allowing additional sensors, analytical capabilities, and predictive models to be incorporated as the project evolves.
+SENTRIA is conceived as a modular and expandable platform, allowing additional sensors, analytical capabilities, and predictive models to be incorporated as the project evolves.
 
 
 ## Introduction
 
 Astronauts face unique health challenges during space missions. Microgravity, radiation exposure, changes in sleep patterns, and prolonged isolation can affect the human body in different ways. Monitoring these conditions is essential to understanding how astronauts respond to the space environment and identifying changes that may require attention.
 
-SETRIA was developed as a response to the need for an integrated system capable of collecting and organizing different types of health-related information. Instead of relying on separate monitoring devices, our approach brings physiological and environmental measurements together in a single platform.
+SENTRIA was developed as a response to the need for an integrated system capable of collecting and organizing different types of health-related information. Instead of relying on separate monitoring devices, our approach brings physiological and environmental measurements together in a single platform.
 
 The system combines an ESP32-S3 microcontroller, multiple sensors, a local touchscreen interface, and a web-based dashboard. This architecture allows information to be collected, processed, displayed, and transmitted through a unified monitoring system.
 
-One of the main features of SETRIA is the use of individual baselines. Since physiological measurements can vary between individuals, the system allows collected information to be compared against personalized reference values. This provides additional context when identifying deviations from an astronaut's typical measurements.
+One of the main features of SENTRIA is the use of individual baselines. Since physiological measurements can vary between individuals, the system allows collected information to be compared against personalized reference values. This provides additional context when identifying deviations from an astronaut's typical measurements.
 
 <p align="center">
-  <img src="./images/AstronautSpace.png" alt="SETRIA Project" width="600">
+  <img src="./images/AstronautSpace.png" alt="SENTRIA Project" width="600">
 </p>
 
 Our goal is to create an accessible and expandable prototype that demonstrates how embedded systems and connected technologies can contribute to astronaut health monitoring.
@@ -78,29 +78,29 @@ Our goal is to create an accessible and expandable prototype that demonstrates h
 
 ## Video Demonstration
 
-The following video presents SETRIA's prototype, its main components, and the operation of its monitoring platform.
+The following video presents SENTRIA's prototype, its main components, and the operation of its monitoring platform.
 
 <p align="center">
   <a href="VIDEO_LINK">
-    <img src="images/video_thumbnail.png" alt="SETRIA Video Demonstration" width="800">
+    <img src="images/video_thumbnail.png" alt="SENTRIA Video Demonstration" width="800">
   </a>
 </p>
 
-<p align="center">Above: SETRIA system demonstration.</p>
+<p align="center">Above: SENTRIA system demonstration.</p>
 
-## SETRIA Monitoring Dashboard
+## SENTRIA Monitoring Dashboard
 
-The SETRIA web dashboard serves as the main interface for visualizing and organizing the information collected by the monitoring system.
+The SENTRIA web dashboard serves as the main interface for visualizing and organizing the information collected by the monitoring system.
 
 It provides an overview of the astronaut's physiological and environmental measurements, allowing users to observe current readings, review alerts, and compare measurements against individual baseline values.
 
 The dashboard separates real-time sensor measurements from manually entered information. This distinction helps users identify which values are being collected directly by the hardware and which are provided through external records or laboratory measurements.
 
 <p align="center">
-  <img src="images/setria_dashboard.png" alt="SETRIA Web Dashboard" width="800">
+  <img src="images/sentria_dashboard.png" alt="SENTRIA Web Dashboard" width="800">
 </p>
 
-<p align="center">Above: Main interface of the SETRIA monitoring dashboard.</p>
+<p align="center">Above: Main interface of the SENTRIA monitoring dashboard.</p>
 
 The dashboard incorporates the following features:
 
@@ -120,15 +120,15 @@ The dashboard is designed to provide a centralized view of the available informa
 
 ## Hardware Prototype
 
-The hardware prototype is the physical foundation of SETRIA. It integrates the ESP32-S3 microcontroller with different sensors and peripheral devices to collect physiological and environmental information.
+The hardware prototype is the physical foundation of SENTRIA. It integrates the ESP32-S3 microcontroller with different sensors and peripheral devices to collect physiological and environmental information.
 
 The ESP32-S3 acts as the central processing unit, receiving sensor measurements and coordinating communication with the monitoring interfaces. The system also includes a Nextion touchscreen display, which provides local access to important measurements, system information, and alerts.
 
 <p align="center">
-  <img src="images/setria_hardware.jpg" alt="SETRIA Hardware Prototype" width="800">
+  <img src="images/sentria_hardware.jpg" alt="SENTRIA Hardware Prototype" width="800">
 </p>
 
-<p align="center">Above: SETRIA hardware prototype and its main electronic components.</p>
+<p align="center">Above: SENTRIA hardware prototype and its main electronic components.</p>
 
 ### Main Components
 
@@ -175,7 +175,7 @@ The Nextion display provides three main sections:
 - System: Displays system status, uptime, connection information, and configuration options.
 
 <p align="center">
-  <img src="images/setria_nextion.jpg" alt="SETRIA Nextion Touchscreen Interface" width="600">
+  <img src="images/sentria_nextion.jpg" alt="SENTRIA Nextion Touchscreen Interface" width="600">
 </p>
 
 <p align="center">Above: Local monitoring interface displayed on the Nextion touchscreen.</p>
