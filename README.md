@@ -1,5 +1,9 @@
 # SETRIA — Intelligent Astronaut Health Monitoring System
 
+<p align="center">
+  <img src="images/SENTRIA.png" alt="Image Alt Text" width="800">
+</p>
+
 **Team: [SETRIA](https://www.spaceappschallenge.org/2026/find-a-team/iaso/?tab=details)**
 
 An intelligent health monitoring system designed to support astronaut well-being during space missions through the integration of physiological and environmental data. SETRIA combines an ESP32-based hardware platform, multiple sensors, and a centralized monitoring interface to collect, process, and visualize relevant health indicators.
