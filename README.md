@@ -1,3 +1,66 @@
+# SETRIA — Intelligent Astronaut Health Monitoring System
+
+**Team: [SETRIA](https://www.spaceappschallenge.org/2026/find-a-team/iaso/?tab=details)**
+
+An intelligent health monitoring system designed to support astronaut well-being during space missions through the integration of physiological and environmental data. SETRIA combines an ESP32-based hardware platform, multiple sensors, and a centralized monitoring interface to collect, process, and visualize relevant health indicators.
+
+The system integrates real-time monitoring capabilities, individual baseline comparisons, and an alert mechanism to help identify potential physiological and environmental anomalies. Through a Nextion touchscreen display and a web-based dashboard, SETRIA provides an accessible visualization of collected information, supporting continuous health monitoring and data-driven decision-making in space environments.
+
+
+## Map of Contents
+
+1. [About the Project](#about-the-project)
+2. [Introduction](#introduction)
+3. [Video Demonstration](#video-demonstration)
+4. [SETRIA Monitoring Dashboard](#setria-monitoring-dashboard)
+5. [Hardware Prototype](#hardware-prototype)
+6. [Physiological Monitoring](#physiological-monitoring)
+7. [Environmental Monitoring](#environmental-monitoring)
+8. [Data Acquisition and Processing](#data-acquisition-and-processing)
+9. [Individual Baseline and Alert System](#individual-baseline-and-alert-system)
+10. [Data Visualization and Analysis](#data-visualization-and-analysis)
+11. [Communication System: MQTT](#communication-system-mqtt)
+12. [System Architecture](#system-architecture)
+13. [NASA Challenge Requirements and Implementation](#nasa-challenge-requirements-and-implementation)
+14. [Installation and Setup](#installation-and-setup)
+15. [Results and Validation](#results-and-validation)
+16. [Limitations and Future Development](#limitations-and-future-development)
+17. [File Descriptions](#file-descriptions)
+18. [Scientific Background and References](#scientific-background-and-references)
+19. [Technologies Used](#technologies-used)
+20. [Team Members and Contributions](#team-members-and-contributions)
+
+
+
+## About the Project
+
+Submission for the NASA International Space Apps Challenge.
+
+Space exploration exposes astronauts to demanding conditions that can affect their physical health and overall well-being. During space missions, changes in gravity, radiation exposure, isolation, sleep disruption, and other environmental factors can influence physiological processes and create challenges for continuous health monitoring.
+
+SETRIA is an intelligent astronaut health monitoring system designed to integrate physiological and environmental information into a centralized platform. The project aims to provide a comprehensive view of astronaut health by combining sensor-based data acquisition, embedded systems, data processing, and interactive visualization.
+
+The system uses an ESP32-S3 as its central hardware platform, connecting different sensors to collect information such as heart rate, heart rate variability (HRV), skin temperature, cabin temperature, humidity, light levels, and movement. These measurements are processed and organized to provide relevant information about the astronaut's physiological condition and surrounding environment.
+
+To make the collected information accessible, SETRIA incorporates two visualization interfaces: a Nextion touchscreen display for local monitoring and a web-based dashboard for viewing measurements, alerts, and individual baseline comparisons. The platform also incorporates MQTT communication to enable data transmission between the hardware and external monitoring interfaces.
+
+An important component of SETRIA is its individual baseline approach. Rather than relying exclusively on generalized reference values, the system considers the astronaut's baseline measurements to identify deviations from their typical physiological patterns. This approach supports the identification of potential anomalies and provides additional context for interpreting collected data.
+
+Our objective is to develop an integrated monitoring solution that supports astronaut health assessment during space missions by bringing together physiological measurements, environmental monitoring, data analysis, and alert mechanisms within a single system.
+
+SETRIA is conceived as a modular and expandable platform, allowing additional sensors, analytical capabilities, and predictive models to be incorporated as the project evolves.
+
+
+
+
+
+
+
+
+
+
+
+
 # IASO — monitor de signos vitales de astronauta (prototipo)
 
 ESP32 + pantalla Nextion NX3224T024 + sensores del kit KY-xxx → MQTT (Mosquitto público) → dashboard web.
