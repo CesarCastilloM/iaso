@@ -435,12 +435,6 @@ The system can operate through two complementary communication paths:
 
 - MQTT Communication: When an external Wi-Fi network is configured, the system can publish telemetry and other information through an MQTT broker.
 
-<p align="center">
-  <img src="images/sentria_architecture.png" alt="SENTRIA System Architecture" width="800">
-</p>
-
-<p align="center">Above: General architecture of the SENTRIA monitoring system.</p>
-
 The architecture can be divided into the following stages:
 
 | Stage | Main Element | Function |
@@ -710,7 +704,7 @@ Through this collaboration, the team developed an integrated prototype that comb
 
 
 
-
+**# RESUME**
 # IASO — monitor de signos vitales de astronauta (prototipo)
 
 ESP32 + pantalla Nextion NX3224T024 + sensores del kit KY-xxx → MQTT (Mosquitto público) → dashboard web.
