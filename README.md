@@ -202,7 +202,7 @@ The Nextion display provides three main sections:
 
 <p align="center">
   <a href="[https://www.youtube.com/watch?v=PM9SsybX97w](https://youtube.com/shorts/NkvxhH5F8uo?feature=share)">
-    <img src="https://img.youtube.com/vi/PM9SsybX97w/maxresdefault.jpg"
+    <img src="[https://img.youtube.com/vi/PM9SsybX97w/maxresdefault.jpg](https://youtube.com/shorts/NkvxhH5F8uo?feature=share)"
          alt="SENTRIA Video Demonstration"
          width="800">
   </a>
