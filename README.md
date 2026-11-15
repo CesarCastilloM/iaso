@@ -637,15 +637,14 @@ The monitoring approach also recognizes the importance of individual variability
 
 The following sources should be included to document the scientific background and technical foundations of the project:
 
-NASA research and documentation concerning astronaut health and human spaceflight.
-
-Scientific publications on cardiovascular adaptation to microgravity.
-
-Research on sleep and circadian rhythms during space missions.
-
-Research on heart rate variability and physiological monitoring.
-
-Technical documentation for the sensors and microcontroller used in the prototype.
+[Risks of Human Spaceflight](https://www.nasa.gov/hrp/risks/)
+[Immune Biomarkers](https://www.nasa.gov/reference/immune-biomarkers/)
+[Human Research Program Omics Archive](https://www.nasa.gov/reference/omics-archive/)
+[Astronauts’ Spines Under Scrutiny](https://www.nasa.gov/missions/station/astronauts-spines-under-scrutiny/)
+[Scientists Probe How Long-Term Spaceflight Alters Immunity](https://www.nasa.gov/missions/station/scientists-probe-how-long-term-spaceflight-alters-immunity/)
+[Venous Haemostasis](https://www.nasa.gov/reference/venous-haemostasis/)
+[Zero T2](https://www.nasa.gov/reference/zero-t2/)
+[Artemis II Standard Measures](https://www.nasa.gov/reference/artemis-ii-standard-measures/)
 
 <p align="center">
   <img src="images/sentria_scientific_background.png" alt="Scientific Background of SENTRIA" width="800">
