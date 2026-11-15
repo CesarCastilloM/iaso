@@ -135,27 +135,27 @@ The ESP32-S3 acts as the central processing unit, receiving sensor measurements 
 The prototype integrates the following components:
 ESP32-S3: Central unit for sensor acquisition, processing, and communication 
 <p align="center">
-  <img src="images/SENTRIA.png" alt="Image Alt Text" width="800">
+  <img src="images/SENTRIA.png" alt="Image Alt Text" width="400">
 </p>
 
 KY-039 Pulse Sensor: Measures pulse information used to estimate heart rate and HRV
 <p align="center">
-  <img src="images/SensorRitmoCard.png" alt="Image Alt Text" width="800">
+  <img src="images/SensorRitmoCard.png" alt="Image Alt Text" width="400">
 </p>
 
 KY-013 Temperature Sensor: Measures temperature through an NTC thermistor
 <p align="center">
-  <img src="images/SensorTempCorp.png" alt="Image Alt Text" width="800">
+  <img src="images/SensorTempCorp.png" alt="Image Alt Text" width="400">
 </p>
 
 DHT11 (KY-015): Measures environmental temperature and humidity
 <p align="center">
-  <img src="images/SensorTempHumAmbiental.png" alt="Image Alt Text" width="800">
+  <img src="images/SensorTempHumAmbiental.png" alt="Image Alt Text" width="400">
 </p>
 
 KY-018 Photoresistor: Detects ambient light levels
 <p align="center">
-  <img src="images/SensorLuz.png" alt="Image Alt Text" width="800">
+  <img src="images/SensorLuz.png" alt="Image Alt Text" width="400">
 </p>
 
 KY-012 Active Buzzer: Produces audible alerts
