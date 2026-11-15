@@ -285,7 +285,7 @@ The system follows a continuous data acquisition process:
 - Visualization: The monitoring interfaces display the available information and system alerts.
 
 <p align="center">
-  <img src="Flujo de datos SENTRIA.png" alt="SENTRIA Data Acquisition Architecture" width="800">
+  <img src="images/Flujo de datos SENTRIA.png" alt="SENTRIA Data Acquisition Architecture" width="800">
 </p>
 
 <p align="center">Above: General data acquisition and processing workflow.</p>
