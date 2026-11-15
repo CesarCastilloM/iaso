@@ -674,7 +674,7 @@ SENTRIA was developed through the collaboration of a multidisciplinary team inte
 Each team member contributed to different aspects of the project, including hardware integration, software development, data visualization, and system implementation.
 
 - Juan Pedro Carrillo
-- Valeria
+- Valeria Alday
 - Carlos Pérez
 - César Castillo
 
