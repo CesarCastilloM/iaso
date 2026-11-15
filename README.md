@@ -365,7 +365,683 @@ SENTRIA supports CSV export to preserve collected measurements and facilitate fu
 
 The current Python station focuses on descriptive statistics and configured alert rules. Predictive models and automated integration with external NASA datasets are considered future development opportunities.
 
+## MQTT Communication
 
+SENTRIA uses the MQTT protocol to transmit monitoring information between the ESP32-S3 and external applications. This communication method allows the system to publish telemetry data through a message broker, making the information accessible to connected monitoring interfaces.
+
+The prototype uses a public Mosquitto test broker to demonstrate wireless data transmission. When an external Wi-Fi network is configured, the ESP32-S3 can publish measurements through the internet while maintaining its local access point.
+
+The system organizes information into different MQTT topics:
+
+MQTT Topic
+
+Description
+
+iaso/<ASTRO_ID>/telemetry
+
+Publishes real-time sensor measurements in JSON format.
+
+iaso/<ASTRO_ID>/status
+
+Reports whether the device is online or offline.
+
+iaso/<ASTRO_ID>/lab
+
+Stores manually entered health and laboratory information.
+
+iaso/<ASTRO_ID>/basal
+
+Stores individual baseline values.
+
+<p align="center">
+  <img src="images/sentria_mqtt.png" alt="SENTRIA MQTT Communication" width="800">
+</p>
+
+<p align="center">Above: MQTT communication between SENTRIA's hardware and monitoring platform.</p>
+
+Telemetry information is published periodically, while laboratory and baseline information can be retained by the broker to make the latest registered values available to connected clients.
+
+The MQTT architecture allows SENTRIA to separate data acquisition from data visualization, providing flexibility for future integrations with additional monitoring applications.
+
+For testing purposes, the published messages can be inspected using an MQTT client such as Mosquitto Sub. For example:
+
+mosquitto_sub -h test.mosquitto.org -t "iaso/<ASTRO_ID>/#" -v
+
+The current implementation uses a public test broker without authentication or encrypted communication. Therefore, it is intended for demonstration purposes and should not be used to transmit sensitive personal or medical information.
+
+## System Architecture
+
+SENTRIA follows a modular architecture that connects sensor acquisition, data processing, communication, and visualization.
+
+The ESP32-S3 acts as the central hardware unit, collecting information from the connected sensors and preparing measurements for local display and external transmission.
+
+The system can operate through two complementary communication paths:
+
+Local Monitoring: The ESP32-S3 creates a Wi-Fi access point that allows nearby devices to access the web dashboard without an external internet connection.
+
+MQTT Communication: When an external Wi-Fi network is configured, the system can publish telemetry and other information through an MQTT broker.
+
+<p align="center">
+  <img src="images/sentria_architecture.png" alt="SENTRIA System Architecture" width="800">
+</p>
+
+<p align="center">Above: General architecture of the SENTRIA monitoring system.</p>
+
+The architecture can be divided into the following stages:
+
+Stage
+
+Main Element
+
+Function
+
+Data Acquisition
+
+Sensors
+
+Collect physiological and environmental information.
+
+Processing
+
+ESP32-S3
+
+Reads sensor signals, processes measurements, and organizes data.
+
+Local Visualization
+
+Nextion Display
+
+Presents measurements, alerts, and system information.
+
+Local Web Access
+
+ESP32-S3 Wi-Fi Access Point
+
+Provides access to the dashboard without external internet.
+
+Wireless Communication
+
+MQTT
+
+Publishes information to an external broker.
+
+Data Visualization
+
+Web Dashboard
+
+Displays measurements, baselines, and alerts.
+
+Historical Analysis
+
+Python Analysis Station
+
+Stores records and calculates descriptive statistics.
+
+This modular structure allows individual components to be modified or expanded without requiring a complete redesign of the system.
+
+## NASA Challenge Requirements and Implementation
+
+SENTRIA was developed in response to the NASA Space Apps Challenge: Health Monitoring Software.
+
+The project focuses on integrating different types of astronaut health information into a centralized monitoring platform. The current prototype implements several monitoring and visualization functions while identifying additional capabilities for future development.
+
+The following table summarizes the relationship between the project's main objectives and the current implementation:
+
+Monitoring Area
+
+SENTRIA Implementation
+
+Current Status
+
+Cardiovascular Monitoring
+
+Heart rate and HRV estimation using the KY-039 sensor.
+
+Implemented
+
+Body Temperature
+
+Temperature measurement using the KY-013 thermistor.
+
+Implemented
+
+Environmental Monitoring
+
+Cabin temperature and humidity through DHT11.
+
+Implemented
+
+Light Monitoring
+
+Ambient light detection through KY-018.
+
+Implemented
+
+Activity Monitoring
+
+Movement detection using KY-002.
+
+Implemented
+
+Radiation Monitoring
+
+Pulse counting from an external Geiger counter.
+
+Hardware integration supported
+
+Sleep Context
+
+Activity, rest duration, movement, and light information.
+
+Basic implementation
+
+Stress Monitoring
+
+HRV deviation compared with individual baseline.
+
+Basic implementation
+
+Oxygen Saturation
+
+Manual data entry through the dashboard.
+
+Manual entry
+
+Blood Pressure
+
+Manual data entry through the dashboard.
+
+Manual entry
+
+Individual Baselines
+
+Comparison between current and personalized reference values.
+
+Implemented
+
+Alert System
+
+Configurable thresholds and baseline deviation alerts.
+
+Implemented
+
+Historical Data
+
+CSV records and Python statistical analysis.
+
+Implemented
+
+Predictive Analysis
+
+Advanced predictive models and automated NASA dataset integration.
+
+Future development
+
+The current prototype demonstrates an integrated monitoring approach while recognizing that some health indicators require additional medical-grade sensors and validation before they can be measured automatically.
+
+## Installation and Setup
+
+This section describes the basic steps required to configure and run the SENTRIA prototype.
+
+Hardware Requirements
+
+The following components are required to assemble the current prototype:
+
+Component
+
+Quantity
+
+Purpose
+
+ESP32-S3 Development Board
+
+1
+
+Main processing unit
+
+KY-039 Pulse Sensor
+
+1
+
+Pulse signal acquisition
+
+KY-013 Temperature Sensor
+
+1
+
+Body temperature measurement
+
+KY-015 DHT11 Module
+
+1
+
+Environmental temperature and humidity
+
+KY-018 Photoresistor
+
+1
+
+Light detection
+
+KY-002 Vibration Sensor
+
+1
+
+Movement detection
+
+External Geiger Counter
+
+1
+
+Radiation pulse acquisition
+
+KY-012 Active Buzzer
+
+1
+
+Audible alerts
+
+Nextion NX3224T024
+
+1
+
+Touchscreen interface
+
+Jumper Wires and Breadboard
+
+As needed
+
+Electrical connections
+
+Software Requirements
+
+Software or Tool
+
+Purpose
+
+Arduino IDE
+
+ESP32-S3 firmware development and upload
+
+ESP32 Arduino Core
+
+Microcontroller support
+
+Nextion Editor
+
+Touchscreen interface development
+
+Python 3
+
+Historical data analysis station
+
+MQTT Broker
+
+Wireless telemetry communication
+
+Web Browser
+
+Access to the monitoring dashboard
+
+Visual Studio Code
+
+Source code editing and project management
+
+Firmware Configuration
+
+Clone or download the SENTRIA repository.
+
+Open the firmware project located in firmware/IASO/.
+
+Open config.h and configure the Wi-Fi credentials, MQTT broker, device identifier, and sensor pins.
+
+Select the appropriate ESP32-S3 board configuration in Arduino IDE.
+
+Compile and upload the firmware.
+
+The firmware should be compiled using the ESP32S3 Dev Module board configuration.
+
+Dashboard Configuration
+
+The web dashboard is located in:
+
+dashboard/index.html
+
+Whenever the dashboard is modified, regenerate the embedded HTML header before uploading the firmware:
+
+python dashboard/gen_header.py
+
+This updates the file used by the ESP32-S3 to serve the dashboard.
+
+Local Dashboard Access
+
+SENTRIA can operate without an external internet connection.
+
+Power on the ESP32-S3.
+
+Connect a computer or mobile device to the Wi-Fi network created by the ESP32.
+
+The default access point is IASO-astro01.
+
+Open a web browser.
+
+Navigate to:
+
+http://192.168.4.1
+
+The dashboard will display the information available from the connected sensors.
+
+The access point name and password can be changed in the firmware configuration.
+
+Python Analysis Station
+
+To run the local analysis station:
+
+python dashboard/estacion.py
+
+Then open the following address in a web browser:
+
+http://localhost:8080
+
+The analysis station retrieves measurements from the ESP32-S3, stores them in CSV files, and provides graphical and statistical summaries.
+
+## Results and Validation
+
+The current SENTRIA prototype demonstrates the integration of multiple sensors, local data acquisition, wireless communication, and monitoring interfaces within a single system.
+
+The implemented features provide a foundation for collecting physiological and environmental information and presenting it through different visualization tools.
+
+The main results include:
+
+Feature
+
+Result
+
+Sensor Integration
+
+Multiple sensors connected to the ESP32-S3.
+
+Local Monitoring
+
+Measurements displayed through the Nextion touchscreen.
+
+Web Dashboard
+
+Browser-based visualization of collected information.
+
+MQTT Communication
+
+Telemetry transmission through an MQTT broker.
+
+Individual Baselines
+
+Comparison between current measurements and personal reference values.
+
+Alerts
+
+Visual and audible notifications based on configured conditions.
+
+Historical Records
+
+Measurement storage in CSV format.
+
+Statistical Analysis
+
+Descriptive analysis through the Python station.
+
+<p align="center">
+  <img src="images/sentria_prototype_results.png" alt="SENTRIA Prototype Results" width="800">
+</p>
+
+<p align="center">Above: SENTRIA prototype during system testing.</p>
+
+The prototype demonstrates how different monitoring components can be integrated into a centralized platform. Further testing with calibrated instruments, medical-grade sensors, and realistic operating conditions will be necessary to evaluate measurement accuracy and reliability.
+
+## Limitations and Future Development
+
+Although SENTRIA provides an integrated monitoring prototype, some capabilities remain limited by the sensors and technologies currently available.
+
+Understanding these limitations is important for identifying the next steps in the development of the project.
+
+Current Limitations
+
+Area
+
+Current Limitation
+
+Heart Rate
+
+KY-039 is an educational pulse sensor and requires further validation.
+
+HRV
+
+Calculated from detected heartbeat intervals and subject to signal quality.
+
+SpO₂
+
+No automatic oxygen saturation sensor is currently integrated.
+
+Blood Pressure
+
+Values must be entered manually.
+
+Radiation
+
+Requires an external Geiger counter; it is not included in the KY sensor kit.
+
+Movement
+
+KY-002 detects vibration or movement but does not provide detailed motion measurements.
+
+Stress
+
+Uses HRV deviation as a basic indicator, not a clinical stress assessment.
+
+Predictive Models
+
+Advanced predictive algorithms are not currently implemented.
+
+Data Security
+
+The public MQTT broker is intended only for testing and demonstration.
+
+Future Development
+
+Future improvements could expand SENTRIA's monitoring capabilities and increase the reliability of the system.
+
+Proposed Improvement
+
+Objective
+
+MAX30102 Sensor
+
+Add automatic heart rate and SpO₂ measurement capabilities.
+
+AD8232 ECG Module
+
+Incorporate electrocardiogram signal acquisition.
+
+GSR Sensor
+
+Add skin conductance measurements as an additional physiological indicator.
+
+MPU6050 Accelerometer and Gyroscope
+
+Improve movement and activity monitoring.
+
+Medical-Grade Sensors
+
+Improve measurement accuracy and reliability.
+
+Secure MQTT Broker
+
+Introduce authentication and encrypted communication.
+
+Predictive Models
+
+Explore algorithms for identifying patterns and potential health risks.
+
+NASA Dataset Integration
+
+Incorporate relevant external datasets for further analysis.
+
+Expanded Data Analysis
+
+Improve historical analysis and generate more comprehensive reports.
+
+These developments would help transform SENTRIA from an educational prototype into a more comprehensive astronaut health monitoring platform.
+
+## File Descriptions
+
+The repository is organized into different directories to separate firmware, dashboard resources, analysis tools, and touchscreen interface files.
+
+File or Directory
+
+Description
+
+firmware/IASO/
+
+Main ESP32-S3 firmware project.
+
+firmware/IASO/config.h
+
+Configuration of Wi-Fi, MQTT, and hardware settings.
+
+firmware/IASO/dashboard_html.h
+
+Embedded dashboard HTML used by the firmware.
+
+firmware/IASO/nextion/
+
+Nextion Editor project and touchscreen resources.
+
+firmware/NextionBridge/
+
+Firmware and utilities for transferring files to the Nextion display.
+
+firmware/NextionBridge/upload_tft.py
+
+Python utility for uploading the Nextion TFT file.
+
+dashboard/index.html
+
+Main web monitoring dashboard.
+
+dashboard/gen_header.py
+
+Generates the dashboard header embedded in the firmware.
+
+dashboard/estacion.py
+
+Python station for collecting and analyzing monitoring data.
+
+dashboard/datos/
+
+Directory used to store historical CSV records.
+
+images/
+
+Images used in the project documentation.
+
+## Scientific Support of the Project
+
+SENTRIA is based on the importance of monitoring physiological and environmental conditions during human space exploration.
+
+The project considers different areas of astronaut health, including cardiovascular activity, sleep, stress-related indicators, radiation exposure, and environmental conditions.
+
+The monitoring approach also recognizes the importance of individual variability. Comparing measurements against personalized reference values can provide additional context when reviewing changes in physiological information.
+
+The following sources should be included to document the scientific background and technical foundations of the project:
+
+NASA research and documentation concerning astronaut health and human spaceflight.
+
+Scientific publications on cardiovascular adaptation to microgravity.
+
+Research on sleep and circadian rhythms during space missions.
+
+Research on heart rate variability and physiological monitoring.
+
+Technical documentation for the sensors and microcontroller used in the prototype.
+
+<p align="center">
+  <img src="images/sentria_scientific_background.png" alt="Scientific Background of SENTRIA" width="800">
+</p>
+
+<p align="center">Above: Scientific areas considered in the development of SENTRIA.</p>
+
+Note: Add the exact scientific publications, NASA documents, and technical datasheets consulted by the team before submitting the final repository.
+
+## Languages, Frameworks, Platforms, APIs, and Other Technologies Used
+
+SENTRIA combines embedded programming, web technologies, wireless communication, and data analysis tools.
+
+Technology
+
+Application
+
+C++
+
+ESP32-S3 firmware development.
+
+HTML
+
+Structure of the web dashboard.
+
+CSS
+
+Dashboard visual presentation.
+
+JavaScript
+
+Dashboard functionality and data visualization.
+
+Python
+
+Historical data collection and statistical analysis.
+
+Arduino IDE
+
+Firmware compilation and upload.
+
+ESP32 Arduino Core
+
+ESP32-S3 development environment.
+
+MQTT
+
+Communication between the hardware and external applications.
+
+Mosquitto
+
+MQTT broker used for testing.
+
+Nextion Editor
+
+Development of the touchscreen interface.
+
+CSV
+
+Storage and export of historical measurements.
+
+Wi-Fi
+
+Local and external wireless communication.
+
+## Team Members and Their Contributions
+
+SENTRIA was developed through the collaboration of a multidisciplinary team interested in combining engineering, programming, and technology to address challenges related to astronaut health monitoring.
+
+Each team member contributed to different aspects of the project, including hardware integration, software development, data visualization, and system implementation.
+
+
+
+<p align="center">
+  <img src="images/sentria_team.jpg" alt="SENTRIA Team" width="800">
+</p>
+
+<p align="center">Above: SENTRIA development team.</p>
+
+Through this collaboration, the team developed an integrated prototype that combines sensor acquisition, embedded systems, wireless communication, and data visualization to support astronaut health monitoring.
 
 
 
