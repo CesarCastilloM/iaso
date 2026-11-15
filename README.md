@@ -52,6 +52,10 @@ The system uses an ESP32-S3 as its central hardware platform, connecting differe
 
 To make the collected information accessible, SENTRIA incorporates two visualization interfaces: a Nextion touchscreen display for local monitoring and a web-based dashboard for viewing measurements, alerts, and individual baseline comparisons. The platform also incorporates MQTT communication to enable data transmission between the hardware and external monitoring interfaces.
 
+<p align="center">
+  <img src="images/IoT.png" alt="SENTRIA Web Dashboard" width="600">
+</p>
+
 An important component of SENTRIA is its individual baseline approach. Rather than relying exclusively on generalized reference values, the system considers the astronaut's baseline measurements to identify deviations from their typical physiological patterns. This approach supports the identification of potential anomalies and provides additional context for interpreting collected data.
 
 Our objective is to develop an integrated monitoring solution that supports astronaut health assessment during space missions by bringing together physiological measurements, environmental monitoring, data analysis, and alert mechanisms within a single system.
@@ -135,7 +139,7 @@ The ESP32-S3 acts as the central processing unit, receiving sensor measurements 
 The prototype integrates the following components:
 ESP32-S3: Central unit for sensor acquisition, processing, and communication 
 <p align="center">
-  <img src="images/SENTRIA.png" alt="Image Alt Text" width="400">
+  <img src="images/ESP32s3.png" alt="Image Alt Text" width="400">
 </p>
 
 KY-039 Pulse Sensor: Measures pulse information used to estimate heart rate and HRV
