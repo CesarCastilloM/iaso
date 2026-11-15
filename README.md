@@ -417,9 +417,9 @@ The ESP32-S3 acts as the central hardware unit, collecting information from the 
 
 The system can operate through two complementary communication paths:
 
-Local Monitoring: The ESP32-S3 creates a Wi-Fi access point that allows nearby devices to access the web dashboard without an external internet connection.
+- Local Monitoring: The ESP32-S3 creates a Wi-Fi access point that allows nearby devices to access the web dashboard without an external internet connection.
 
-MQTT Communication: When an external Wi-Fi network is configured, the system can publish telemetry and other information through an MQTT broker.
+- MQTT Communication: When an external Wi-Fi network is configured, the system can publish telemetry and other information through an MQTT broker.
 
 <p align="center">
   <img src="images/sentria_architecture.png" alt="SENTRIA System Architecture" width="800">
@@ -429,53 +429,15 @@ MQTT Communication: When an external Wi-Fi network is configured, the system can
 
 The architecture can be divided into the following stages:
 
-Stage
-
-Main Element
-
-Function
-
-Data Acquisition
-
-Sensors
-
-Collect physiological and environmental information.
-
-Processing
-
-ESP32-S3
-
-Reads sensor signals, processes measurements, and organizes data.
-
-Local Visualization
-
-Nextion Display
-
-Presents measurements, alerts, and system information.
-
-Local Web Access
-
-ESP32-S3 Wi-Fi Access Point
-
-Provides access to the dashboard without external internet.
-
-Wireless Communication
-
-MQTT
-
-Publishes information to an external broker.
-
-Data Visualization
-
-Web Dashboard
-
-Displays measurements, baselines, and alerts.
-
-Historical Analysis
-
-Python Analysis Station
-
-Stores records and calculates descriptive statistics.
+| Stage | Main Element | Function |
+|---|---|---|
+| Data Acquisition | Sensors | Collect physiological and environmental information. |
+| Processing | ESP32-S3 | Reads sensor signals, processes measurements, and organizes data. |
+| Local Visualization | Nextion Display | Presents measurements, alerts, and system information. |
+| Local Web Access | ESP32-S3 Wi-Fi Access Point | Provides access to the dashboard without external internet. |
+| Wireless Communication | MQTT | Publishes information to an external broker. |
+| Data Visualization | Web Dashboard | Displays measurements, baselines, and alerts. |
+| Historical Analysis | Python Analysis Station | Stores records and calculates descriptive statistics. |
 
 This modular structure allows individual components to be modified or expanded without requiring a complete redesign of the system.
 
