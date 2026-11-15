@@ -181,7 +181,7 @@ External Geiger Counter(FUTURE implement): Provides radiation pulse measurements
 The sensors are connected to the ESP32-S3 through its GPIO and analog input pins. Each component contributes information to a different monitoring function.
 
 <p align="center">
-  <img src="images/setria_sensor_connections.png" alt="SETRIA Sensor Connections" width="800">
+  <img src="images/ConnectionSensor.png" alt="SETRIA Sensor Connections" width="800">
 </p>
 
 <p align="center">Above: Sensor integration with the ESP32-S3.</p>
