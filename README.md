@@ -100,17 +100,17 @@ The dashboard separates real-time sensor measurements from manually entered info
 
 The dashboard incorporates the following features:
 
-Real-Time Monitoring: Displays measurements received from the ESP32-S3, including heart rate, HRV, temperature, humidity, light, and movement information.
+- Real-Time Monitoring: Displays measurements received from the ESP32-S3, including heart rate, HRV, temperature, humidity, light, and movement information.
 
-Individual Baselines: Allows measurements to be compared against personalized reference values.
+- Individual Baselines: Allows measurements to be compared against personalized reference values.
 
-Alert Visualization: Highlights measurements that exceed configured thresholds or deviate from established baselines.
+- Alert Visualization: Highlights measurements that exceed configured thresholds or deviate from established baselines.
 
-Manual Data Entry: Supports the registration of additional health information that is not directly measured by the current sensor kit.
+- Manual Data Entry: Supports the registration of additional health information that is not directly measured by the current sensor kit.
 
-Historical Records: Organizes collected measurements to support the review of monitoring sessions.
+- Historical Records: Organizes collected measurements to support the review of monitoring sessions.
 
-Data Export: Allows recorded information to be downloaded in CSV format for further analysis.
+- Data Export: Allows recorded information to be downloaded in CSV format for further analysis.
 
 The dashboard is designed to provide a centralized view of the available information, making it easier to interpret measurements and identify relevant changes over time.
 
@@ -130,45 +130,24 @@ The ESP32-S3 acts as the central processing unit, receiving sensor measurements 
 
 The prototype integrates the following components:
 
-Component
 
-Function
+ESP32-S3: Central unit for sensor acquisition, processing, and communication 
 
-ESP32-S3
+KY-039 Pulse Sensor: Measures pulse information used to estimate heart rate and HRV
 
-Central unit for sensor acquisition, processing, and communication
+KY-013 Temperature Sensor: Measures temperature through an NTC thermistor
 
-KY-039 Pulse Sensor
+DHT11 (KY-015): Measures environmental temperature and humidity
 
-Measures pulse information used to estimate heart rate and HRV
+KY-018 Photoresistor: Detects ambient light levels
 
-KY-013 Temperature Sensor
+KY-002 Vibration Sensor :Detects movement and activity changes
 
-Measures temperature through an NTC thermistor
+External Geiger Counter: Provides radiation pulse measurements
 
-DHT11 (KY-015)
+KY-012 Active Buzzer: Produces audible alerts
 
-Measures environmental temperature and humidity
-
-KY-018 Photoresistor
-
-Detects ambient light levels
-
-KY-002 Vibration Sensor
-
-Detects movement and activity changes
-
-External Geiger Counter
-
-Provides radiation pulse measurements
-
-KY-012 Active Buzzer
-
-Produces audible alerts
-
-Nextion NX3224T024
-
-Provides a local touchscreen monitoring interface
+Nextion NX3224T024: Provides a local touchscreen monitoring interface
 
 ### Sensor Integration
 
@@ -182,17 +161,14 @@ The sensors are connected to the ESP32-S3 through its GPIO and analog input pins
 
 The prototype organizes its measurements into two main groups:
 
-Physiological Monitoring: Heart rate, heart rate variability, and body temperature.
-
-Environmental and Activity Monitoring: Cabin temperature, humidity, light levels, movement, and radiation measurements.
+- Physiological Monitoring: Heart rate, heart rate variability, and body temperature.
+- Environmental and Activity Monitoring: Cabin temperature, humidity, light levels, movement, and radiation measurements.
 
 The Nextion display provides three main sections:
 
-Vitals: Displays heart rate, HRV, body temperature, and alerts.
-
-Environment: Displays radiation, cabin conditions, activity, and light information.
-
-System: Displays system status, uptime, connection information, and configuration options.
+- Vitals: Displays heart rate, HRV, body temperature, and alerts.
+- Environment: Displays radiation, cabin conditions, activity, and light information.
+- System: Displays system status, uptime, connection information, and configuration options.
 
 <p align="center">
   <img src="images/setria_nextion.jpg" alt="SETRIA Nextion Touchscreen Interface" width="600">
@@ -205,14 +181,11 @@ The prototype is designed to operate as an integrated monitoring unit, combining
 ### Nextion Touchscreen Interface
 
 The Nextion NX3224T024 touchscreen provides a local interface for accessing essential system information without requiring the web dashboard.
-
 The interface is organized into three main sections:
 
-Vitals: Displays heart rate, HRV, body temperature, and alerts.
-
-Environment: Displays radiation, cabin conditions, activity, and light information.
-
-System: Displays system status, uptime, connection information, and configuration options.
+- Vitals: Displays heart rate, HRV, body temperature, and alerts.
+- Environment: Displays radiation, cabin conditions, activity, and light information.
+- System: Displays system status, uptime, connection information, and configuration options.
 
 <p align="center">
   <img src="images/sentria_nextion.jpg" alt="SENTRIA Nextion Touchscreen Interface" width="600">
@@ -222,7 +195,175 @@ System: Displays system status, uptime, connection information, and configuratio
 
 The prototype is designed to operate as an integrated monitoring unit, combining sensor acquisition, local visualization, and wireless communication. Its modular architecture also allows additional sensors and monitoring capabilities to be incorporated in future development.
 
+## Physiological Monitoring
 
+SENTRIA incorporates sensors and data-entry capabilities to collect and organize information related to an astronaut's physiological condition.
+
+The current prototype focuses on three main physiological measurements:
+
+Heart Rate: The KY-039 pulse sensor detects pulse signals that are processed to estimate beats per minute (BPM).
+
+Heart Rate Variability (HRV): The system calculates an HRV indicator using the intervals between detected heartbeats.
+
+Body Temperature: The KY-013 thermistor provides temperature measurements through an analog input of the ESP32-S3.
+
+<p align="center">
+  <img src="images/sentria_physiological_monitoring.png" alt="SENTRIA Physiological Monitoring" width="800">
+</p>
+
+<p align="center">Above: Physiological measurements integrated into SENTRIA.</p>
+
+Additional health information, such as oxygen saturation (SpO₂) and blood pressure, can be entered manually through the dashboard. These values are not automatically measured by the current sensor kit.
+
+By organizing these measurements in one platform, SENTRIA provides a foundation for monitoring physiological information and comparing it against individual reference values.
+
+## Environmental Monitoring
+
+In addition to physiological measurements, SENTRIA incorporates sensors to monitor environmental conditions and activity-related information.
+
+These measurements provide additional context for understanding the conditions surrounding the astronaut.
+
+The current prototype includes:
+
+Cabin Temperature and Humidity: The DHT11 sensor measures environmental temperature and relative humidity.
+
+Light Levels: The KY-018 photoresistor detects changes in ambient light, providing contextual information that can help interpret sleep and activity patterns.
+
+Movement Detection: The KY-002 vibration sensor detects movement or activity changes.
+
+Radiation Measurements: An external Geiger counter can provide pulse information that the ESP32-S3 uses to calculate counts per minute (CPM).
+
+<p align="center">
+  <img src="images/sentria_environmental_monitoring.png" alt="SENTRIA Environmental Monitoring" width="800">
+</p>
+
+<p align="center">Above: Environmental and activity monitoring components.</p>
+
+These measurements complement physiological information by providing a broader overview of the astronaut's monitoring environment.
+
+## Data Acquisition and Processing
+
+The ESP32-S3 acts as the central unit responsible for acquiring information from the connected sensors and organizing the collected measurements.
+
+Each sensor provides information through its corresponding input. The microcontroller processes these signals and prepares the resulting measurements for visualization and communication.
+
+The system follows a continuous data acquisition process:
+
+Sensor Acquisition: Sensors collect physiological and environmental information.
+
+Signal Processing: The ESP32-S3 processes the incoming signals and calculates the corresponding measurements.
+
+Data Organization: Measurements are organized into structured telemetry information.
+
+Communication: Data is transmitted through MQTT when an external network connection is configured.
+
+Visualization: The monitoring interfaces display the available information and system alerts.
+
+<p align="center">
+  <img src="images/sentria_data_acquisition.png" alt="SENTRIA Data Acquisition Architecture" width="800">
+</p>
+
+<p align="center">Above: General data acquisition and processing workflow.</p>
+
+SENTRIA also supports local operation. The ESP32-S3 can create its own Wi-Fi access point, allowing a nearby device to connect to the monitoring dashboard without requiring an external internet connection.
+
+This functionality provides an alternative way to access the system when an external network is unavailable.
+
+## Individual Baseline and Alert System
+
+One of SENTRIA's main features is its individual baseline approach. Physiological measurements can differ considerably between individuals, meaning that a single generalized reference value may not always provide enough context to interpret changes in an astronaut's condition.
+
+To address this, SENTRIA allows users to register individual baseline values and compare them against current measurements.
+
+The dashboard displays the current value, its corresponding baseline, and the percentage difference between them. Configurable tolerances help identify measurements that deviate from the established reference values.
+
+<p align="center">
+  <img src="images/sentria_baseline_alerts.png" alt="SENTRIA Individual Baseline and Alerts" width="800">
+</p>
+
+<p align="center">Above: Individual baseline comparison and alert visualization.</p>
+
+The alert system incorporates two main approaches:
+
+Threshold-Based Alerts: Identifies measurements that exceed configured limits.
+
+Baseline Deviation Alerts: Identifies significant changes compared with an individual's established reference values.
+
+The system also includes an audible alert through the KY-012 buzzer and visual notifications through the monitoring interfaces.
+
+Manual health information can also be compared against registered baseline values, allowing the dashboard to organize additional information alongside real-time sensor measurements.
+
+These mechanisms are intended to highlight relevant changes and support monitoring. They do not constitute medical diagnoses or replace professional medical assessment.
+
+## Data Visualization and Analysis
+
+SENTRIA incorporates a web-based dashboard and a Python analysis station to organize, visualize, and review the information collected during monitoring sessions.
+
+The dashboard provides access to current measurements, individual baseline comparisons, and alerts, while the Python analysis station offers additional tools for reviewing historical records.
+
+<p align="center">
+  <img src="images/sentria_data_visualization.png" alt="SENTRIA Data Visualization" width="800">
+</p>
+
+<p align="center">Above: Data visualization and monitoring interfaces.</p>
+
+### Historical Data Visualization
+
+The Python analysis station retrieves measurements from the ESP32-S3 and stores them in CSV files. This allows monitoring sessions to be preserved and reviewed later.
+
+The station includes graphical representations of individual measurements, with reference ranges to provide context when interpreting the collected data.
+
+Users can review information across different time periods:
+
+15 minutes
+
+1 hour
+
+6 hours
+
+Complete monitoring session
+
+<p align="center">
+  <img src="images/sentria_historical_data.png" alt="SENTRIA Historical Data Analysis" width="800">
+</p>
+
+<p align="center">Above: Historical measurements displayed through the Python analysis station.</p>
+
+### Statistical Analysis
+
+In addition to visualizing measurements, the Python station calculates descriptive statistics to summarize monitoring sessions.
+
+The available analysis includes:
+
+Mean, minimum, and maximum values.
+
+Standard deviation.
+
+Hourly measurement trends.
+
+Percentage of time within configured reference ranges.
+
+Alert episodes organized by type.
+
+Rest and activity information.
+
+Connection interruptions.
+
+Automatically generated textual findings based on the collected data.
+
+The analysis can be performed over different time periods, allowing users to review both short-term changes and longer monitoring sessions.
+
+### Data Export
+
+SENTRIA supports CSV export to preserve collected measurements and facilitate further analysis using external tools.
+
+<p align="center">
+  <img src="images/sentria_data_export.png" alt="SENTRIA Data Export" width="600">
+</p>
+
+<p align="center">Above: Exporting monitoring data for further analysis.</p>
+
+The current Python station focuses on descriptive statistics and configured alert rules. Predictive models and automated integration with external NASA datasets are considered future development opportunities.
 
 
 
