@@ -69,6 +69,10 @@ The system combines an ESP32-S3 microcontroller, multiple sensors, a local touch
 
 One of the main features of SETRIA is the use of individual baselines. Since physiological measurements can vary between individuals, the system allows collected information to be compared against personalized reference values. This provides additional context when identifying deviations from an astronaut's typical measurements.
 
+<p align="center">
+  <img src="./images/AstronautSpace.png" alt="SETRIA Project" width="600">
+</p>
+
 Our goal is to create an accessible and expandable prototype that demonstrates how embedded systems and connected technologies can contribute to astronaut health monitoring.
 
 
