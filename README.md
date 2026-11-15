@@ -72,9 +72,155 @@ One of the main features of SETRIA is the use of individual baselines. Since phy
 Our goal is to create an accessible and expandable prototype that demonstrates how embedded systems and connected technologies can contribute to astronaut health monitoring.
 
 
+## Video Demonstration
 
+The following video presents SETRIA's prototype, its main components, and the operation of its monitoring platform.
 
+<p align="center">
+  <a href="VIDEO_LINK">
+    <img src="images/video_thumbnail.png" alt="SETRIA Video Demonstration" width="800">
+  </a>
+</p>
 
+<p align="center">Above: SETRIA system demonstration.</p>
+
+## SETRIA Monitoring Dashboard
+
+The SETRIA web dashboard serves as the main interface for visualizing and organizing the information collected by the monitoring system.
+
+It provides an overview of the astronaut's physiological and environmental measurements, allowing users to observe current readings, review alerts, and compare measurements against individual baseline values.
+
+The dashboard separates real-time sensor measurements from manually entered information. This distinction helps users identify which values are being collected directly by the hardware and which are provided through external records or laboratory measurements.
+
+<p align="center">
+  <img src="images/setria_dashboard.png" alt="SETRIA Web Dashboard" width="800">
+</p>
+
+<p align="center">Above: Main interface of the SETRIA monitoring dashboard.</p>
+
+The dashboard incorporates the following features:
+
+Real-Time Monitoring: Displays measurements received from the ESP32-S3, including heart rate, HRV, temperature, humidity, light, and movement information.
+
+Individual Baselines: Allows measurements to be compared against personalized reference values.
+
+Alert Visualization: Highlights measurements that exceed configured thresholds or deviate from established baselines.
+
+Manual Data Entry: Supports the registration of additional health information that is not directly measured by the current sensor kit.
+
+Historical Records: Organizes collected measurements to support the review of monitoring sessions.
+
+Data Export: Allows recorded information to be downloaded in CSV format for further analysis.
+
+The dashboard is designed to provide a centralized view of the available information, making it easier to interpret measurements and identify relevant changes over time.
+
+## Hardware Prototype
+
+The hardware prototype is the physical foundation of SETRIA. It integrates the ESP32-S3 microcontroller with different sensors and peripheral devices to collect physiological and environmental information.
+
+The ESP32-S3 acts as the central processing unit, receiving sensor measurements and coordinating communication with the monitoring interfaces. The system also includes a Nextion touchscreen display, which provides local access to important measurements, system information, and alerts.
+
+<p align="center">
+  <img src="images/setria_hardware.jpg" alt="SETRIA Hardware Prototype" width="800">
+</p>
+
+<p align="center">Above: SETRIA hardware prototype and its main electronic components.</p>
+
+### Main Components
+
+The prototype integrates the following components:
+
+Component
+
+Function
+
+ESP32-S3
+
+Central unit for sensor acquisition, processing, and communication
+
+KY-039 Pulse Sensor
+
+Measures pulse information used to estimate heart rate and HRV
+
+KY-013 Temperature Sensor
+
+Measures temperature through an NTC thermistor
+
+DHT11 (KY-015)
+
+Measures environmental temperature and humidity
+
+KY-018 Photoresistor
+
+Detects ambient light levels
+
+KY-002 Vibration Sensor
+
+Detects movement and activity changes
+
+External Geiger Counter
+
+Provides radiation pulse measurements
+
+KY-012 Active Buzzer
+
+Produces audible alerts
+
+Nextion NX3224T024
+
+Provides a local touchscreen monitoring interface
+
+### Sensor Integration
+
+The sensors are connected to the ESP32-S3 through its GPIO and analog input pins. Each component contributes information to a different monitoring function.
+
+<p align="center">
+  <img src="images/setria_sensor_connections.png" alt="SETRIA Sensor Connections" width="800">
+</p>
+
+<p align="center">Above: Sensor integration with the ESP32-S3.</p>
+
+The prototype organizes its measurements into two main groups:
+
+Physiological Monitoring: Heart rate, heart rate variability, and body temperature.
+
+Environmental and Activity Monitoring: Cabin temperature, humidity, light levels, movement, and radiation measurements.
+
+The Nextion display provides three main sections:
+
+Vitals: Displays heart rate, HRV, body temperature, and alerts.
+
+Environment: Displays radiation, cabin conditions, activity, and light information.
+
+System: Displays system status, uptime, connection information, and configuration options.
+
+<p align="center">
+  <img src="images/setria_nextion.jpg" alt="SETRIA Nextion Touchscreen Interface" width="600">
+</p>
+
+<p align="center">Above: Local monitoring interface displayed on the Nextion touchscreen.</p>
+
+The prototype is designed to operate as an integrated monitoring unit, combining sensor acquisition, local visualization, and wireless communication. Its modular architecture also allows additional sensors and monitoring capabilities to be incorporated in future development.
+
+### Nextion Touchscreen Interface
+
+The Nextion NX3224T024 touchscreen provides a local interface for accessing essential system information without requiring the web dashboard.
+
+The interface is organized into three main sections:
+
+Vitals: Displays heart rate, HRV, body temperature, and alerts.
+
+Environment: Displays radiation, cabin conditions, activity, and light information.
+
+System: Displays system status, uptime, connection information, and configuration options.
+
+<p align="center">
+  <img src="images/sentria_nextion.jpg" alt="SENTRIA Nextion Touchscreen Interface" width="600">
+</p>
+
+<p align="center">Above: Local monitoring interface displayed on the Nextion touchscreen.</p>
+
+The prototype is designed to operate as an integrated monitoring unit, combining sensor acquisition, local visualization, and wireless communication. Its modular architecture also allows additional sensors and monitoring capabilities to be incorporated in future development.
 
 
 
