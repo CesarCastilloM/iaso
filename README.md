@@ -201,10 +201,13 @@ The Nextion display provides three main sections:
 - System: Displays system status, uptime, connection information, and configuration options.
 
 <p align="center">
-  <img src="images/sentria_nextion.jpg" alt="SENTRIA Nextion Touchscreen Interface" width="600">
+  <a href="[https://www.youtube.com/watch?v=PM9SsybX97w](https://youtube.com/shorts/NkvxhH5F8uo?feature=share)">
+    <img src="https://img.youtube.com/vi/PM9SsybX97w/maxresdefault.jpg"
+         alt="SENTRIA Video Demonstration"
+         width="800">
+  </a>
 </p>
-
-<p align="center">Above: Local monitoring interface displayed on the Nextion touchscreen.</p>
+<p align="center"><em>Click the image to watch the SENTRIA demonstration.</em></p>
 
 The prototype is designed to operate as an integrated monitoring unit, combining sensor acquisition, local visualization, and wireless communication. Its modular architecture also allows additional sensors and monitoring capabilities to be incorporated in future development.
 
